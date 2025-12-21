@@ -16,12 +16,12 @@ export default function Menu(){
                   </li>
                   <li>
                     <Link to="/">
-                       Profile 
+                       Learn More
                     </Link>
                  </li>
                 <li>
                     <Link to="/">
-                    Learn More  
+                        Your Cards  
                     </Link>
                 </li>
                   
