@@ -2,31 +2,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 
-#menuContainer{
-
+#menuContainer a{
+text-decoration: none;
 }
 .logoTitle{
     font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 4rem;
-  background: linear-gradient(to left, #7c4df2, #6fa8ff);
+  background:  #4b9fea;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-align: center;
   margin:0;
   -webkit-text-stroke: 1px rgba(0, 0, 0, 0.3);
+}.logoTitle:hover{
+     background: #3c98e7;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
+#miniTxt{
+    position: absolute;
+    z-index: 0;
+    font-size: 11px;
+    top:22px;
+    font-weight: 500;
+    background-color: rgb(104, 104, 104);
+     -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+    transform: rotate(-30deg);
 
+}
 .menuContent{
     display: flex;
     justify-content: center;
+    align-items: center;
      font-family: "Montserrat", sans-serif;
       font-weight:400;
+    margin-bottom: 0;
 }
 .menuContent ul{
     display:flex;
     flex-direction:row;
     padding: 0;
+    margin-top:0;
+    margin-bottom: 0;
     
 }
 .menuContent ul li{

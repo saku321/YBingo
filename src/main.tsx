@@ -1,5 +1,18 @@
 import './styles/main.css';
 import testCard from './assets/bingo.png';
+import { styled } from '@mui/material/styles';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Collapse from '@mui/material/Collapse';
+import Avatar from '@mui/material/Avatar';
+import IconButton, { IconButtonProps } from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import { red } from '@mui/material/colors';
+
+
 
 interface BingoCard {
   id: number;
@@ -14,6 +27,8 @@ export default function Main(){
         { id: 1, image: './assets/bingo.png' },
         { id: 2, image: '/image2.png' },
         { id: 3, image: '/image3.png' },
+        { id: 4, image: '/image2.png' },
+     
         // more data...
     ];
 
@@ -24,9 +39,33 @@ export default function Main(){
             <div className="cardsContainer">
                 {bingoCards.map((card) => (
                     <div key={card.id} className="bingocard">
-                        <img src={testCard} alt="bingo card" />
-                    </div>
+                        <Card  sx={{ maxWidth: 345 }}>
+                                <CardHeader
+                                    avatar={
+                                    <Avatar sx={{ bgcolor: red[500] }} >
+                                        R
+                                    </Avatar>
+                                    }
+                                    action={
+                                    <IconButton aria-label="settings">
+                                    </IconButton>
+                                    }
+                                    
+                                    subheader="September 14, 2016"
+                                />
+                                <CardMedia
+                                    component="img"
+                                    image={testCard}
+                                    alt="bingo"
+                                    className="bingoImg"
+                                />
+                            
+                         
+                        
+                                </Card>
+                </div>
                 ))}
+                <div id="spacer"></div>
             </div>
         </div>
     )

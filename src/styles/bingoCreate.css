@@ -1,0 +1,54 @@
+#bingoCreatingContainer{
+    width:60%;
+    margin: auto;
+    margin-top:1em;   
+}
+#creatorTitle{
+    color:#484a4e;
+     font-family: "Montserrat", sans-serif;
+    font-weight:600;
+    font-size: 1rem;
+    text-align: center;
+}
+#creatorContent{
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cell{
+  height: 70px;
+  width: 100%;
+  resize: none;
+  text-align: center;
+  font-size: 14px;
+  padding: 4px;       /* small padding, not full height */
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  overflow: hidden;       /* vertical center for single line */
+  justify-content: center;
+  align-items: center;
+}
+
+.bingoGrid{
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap:6px;
+    width:350px;
+    
+}
+.generateCardBtn{
+    display:flex !important;
+    margin:auto !important;
+    margin-top:20px !important; 
+}
+#statusTxt{
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+      font-family: "Montserrat", sans-serif;
+    font-weight:400;
+    font-size: 13px;
+}
