@@ -4,8 +4,69 @@ const app = express();
 const cors = require('cors');
 const { saveBingoBoard } = require('./databaseHandler');
 const {nanoid}=require("nanoid");
-app.use(cors());
+const { verify } = require('node:crypto');
+const jwt = require('jsonwebtoken');
+const { verifyGoogleToken,requireAuth } = require('./authHandler');
+const { findOrCreateUser,findUserById } = require('./databaseHandler');
+const cookieParser = require('cookie-parser');
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}));
+
 app.use(express.json());
+app.use(cookieParser());
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  next();
+});
+
+app.post("/api/auth/google", async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ error: 'Missing token' });
+
+    const userData = await verifyGoogleToken(token);
+
+     const user = await findOrCreateUser({
+      googleId: userData.googleId,
+      email: userData.email,
+      name: userData.name,
+      picture: userData.picture,
+    });
+
+    console.log(user)
+    const appToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    res.cookie('auth_token', appToken, {
+      httpOnly: true,
+      sameSite:"strict",
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('login error', err);
+   return res.status(401).json({ error: 'Invalid Google token' });
+
+  }
+});
+app.post("/api/auth/checkLogin", requireAuth, async (req, res) => {
+
+  const user = await findUserById(req.userId);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  console.log("authUseri:"+user);
+  res.json(user);
+});
+
 
 app.post('/api/createCard', async (req, res) => {
   try {

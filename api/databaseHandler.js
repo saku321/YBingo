@@ -45,6 +45,25 @@ async function getBingoBoards(query = {}) {
   return db.collection('bingoBoards').find(query).toArray();
 }
 
+
+async function findUserById(googleId) {
+  const db = await connect();
+  return db.collection('users').findOne({googleId });
+}
+
+async function createUser(userData) {
+  const db = await connect();
+  const res = await db.collection('users').insertOne(userData);
+  return res.insertedId;
+}
+async function findOrCreateUser(userData) {
+  let user = await findUserById(userData.googleId);
+  if (!user) {
+    const result = await createUser(userData);
+    user = await findUserById(result);
+  }
+  return user;
+}
 async function close() {
   if (_client) {
     await _client.close();
@@ -57,5 +76,9 @@ module.exports = {
   connect,
   saveBingoBoard,
   getBingoBoards,
+  findUserById,
+
+  findOrCreateUser,
+
   close
 };

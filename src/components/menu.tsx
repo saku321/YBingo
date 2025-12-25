@@ -1,9 +1,29 @@
 
 import '../styles/menu.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {Link} from 'react-router-dom';
 export default function Menu(){
-    const [login,setLogin] = useState(true);
+    const [login,setLogin] = useState(false);
+    const apiUrl = process.env.REACT_APP_API_DOMAIN || '';
+    console.log(apiUrl);
+    useEffect(()=>{
+        const checkLoginStatus = async()=>{
+            try{
+                const res = await fetch(`${apiUrl}/api/auth/checkLogin`,{
+                    method:"POST",
+                    credentials:"include",
+                });
+                if(res.ok){
+                    setLogin(true);
+                }else{
+                    setLogin(false);
+                }   
+            }catch(err){
+                setLogin(false);
+            }
+        };
+        checkLoginStatus();
+    },[]);
     return(
         <div id="menuContainer">
             
@@ -27,7 +47,7 @@ export default function Menu(){
                         Your Cards  
                     </Link>
                     ):(
-                    <Link to="/">
+                    <Link to="/login">
                         Login  
                     </Link>
                     )}
