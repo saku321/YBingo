@@ -2,10 +2,23 @@
 import '../styles/menu.css';
 import { useEffect, useState } from 'react';
 import {Link} from 'react-router-dom';
+import { useAuth } from '../authProvider';
 export default function Menu(){
     const [login,setLogin] = useState(false);
     const apiUrl = process.env.REACT_APP_API_DOMAIN || '';
-    console.log(apiUrl);
+    const {isLoggedIn} = useAuth();
+    const setLoggedIn = useAuth().setIsLoggedIn;
+    function logOutUser(){
+        fetch(`${apiUrl}/api/auth/logout`,{
+            method:"POST",
+            credentials:"include",
+        }).then((res)=>{
+            if(res.ok){
+                setLoggedIn(false);
+            }
+        });
+    }
+
     useEffect(()=>{
         const checkLoginStatus = async()=>{
             try{
@@ -14,12 +27,12 @@ export default function Menu(){
                     credentials:"include",
                 });
                 if(res.ok){
-                    setLogin(true);
+                   setLoggedIn(true);
                 }else{
-                    setLogin(false);
+                    setLoggedIn(false);
                 }   
             }catch(err){
-                setLogin(false);
+                setLoggedIn(false);
             }
         };
         checkLoginStatus();
@@ -41,18 +54,27 @@ export default function Menu(){
                        Learn More
                     </Link>
                  </li>
-                <li>
-                    {login?(
+                
+                    {isLoggedIn ?(
+                        <div style={{display:"flex"}}>
+                            <li>
                     <Link to="/">
                         Your Cards  
                     </Link>
+                    </li>
+                    <li>
+                        <button id="logoutBtn" onClick={logOutUser}>LogOut</button>
+                    </li>
+                    </div>
                     ):(
-                    <Link to="/login">
-                        Login  
-                    </Link>
+                    <li>
+                        <Link to="/login">
+                            Login  
+                        </Link>
+                    </li>
                     )}
                   
-                </li>
+                
                   
                 </ul>
             </div>

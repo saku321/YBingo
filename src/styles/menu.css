@@ -63,3 +63,14 @@ text-decoration: none;
     color:#070707;
     transition: 0.5s;
 }
+#logoutBtn{
+    background:none;
+      color:#4c4e52;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}

@@ -1,12 +1,12 @@
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import '../styles/login.css';
-
+import { useAuth } from "../authProvider";
 
 
 
 const Login = () => {
-
+ const setLoggedin = useAuth().setIsLoggedIn;
   const apidomain = process.env.REACT_APP_API_DOMAIN || '';
   const handleSuccess = async(credentialResponse: any) => {
     
@@ -27,6 +27,7 @@ const Login = () => {
     const data = await res.json();
     console.log("Login successful", data);
     // Handle successful login (e.g., store user info, redirect, etc.)
+    setLoggedin(true);
 
   };
   const handleError = () => {
