@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion,ObjectId  } = require('mongodb');
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB = process.env.MONGODB_DB ;
@@ -46,7 +46,13 @@ async function getBingoBoards(query = {}) {
 }
 
 
-async function findUserById(googleId) {
+async function findUserById(userId) {
+  const db = await connect();
+  return db.collection("users").findOne({
+    _id: new ObjectId(userId),
+  });
+}
+async function findUserByGoogleId(googleId) {
   const db = await connect();
   return db.collection('users').findOne({googleId });
 }
@@ -57,7 +63,7 @@ async function createUser(userData) {
   return res.insertedId;
 }
 async function findOrCreateUser(userData) {
-  let user = await findUserById(userData.googleId);
+  let user = await findUserById(userData.userId);
   if (!user) {
     const result = await createUser(userData);
     user = await findUserById(result);
@@ -77,7 +83,7 @@ module.exports = {
   saveBingoBoard,
   getBingoBoards,
   findUserById,
-
+findUserByGoogleId,
   findOrCreateUser,
 
   close

@@ -36,7 +36,6 @@ app.post("/api/auth/google", async (req, res) => {
       picture: userData.picture,
     });
 
-    console.log(user)
     const appToken = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET,
@@ -57,16 +56,21 @@ app.post("/api/auth/google", async (req, res) => {
   }
 });
 app.post("/api/auth/checkLogin", requireAuth, async (req, res) => {
-
   const user = await findUserById(req.userId);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
 
-  console.log("authUseri:"+user);
   res.json(user);
 });
-
+app.post("/api/auth/logout", (req, res) => {
+  res.clearCookie('auth_token', {
+    httpOnly: true,
+    sameSite:"strict",
+    secure: process.env.NODE_ENV === 'production',
+  });
+  return res.status(200).json({ ok: true });
+});
 
 app.post('/api/createCard', async (req, res) => {
   try {
