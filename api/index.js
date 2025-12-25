@@ -47,8 +47,15 @@ app.post("/api/auth/google", async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
+    const filterData={
+      _id:user._id,
+      email:user.email,
+      name:user.name,
+      picture:user.picture
+    };
 
-    return res.status(200).json({ ok: true });
+
+    return res.status(200).json({ user: filterData });
   } catch (err) {
     console.error('login error', err);
    return res.status(401).json({ error: 'Invalid Google token' });
@@ -60,7 +67,6 @@ app.post("/api/auth/checkLogin", requireAuth, async (req, res) => {
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
-
   res.json(user);
 });
 app.post("/api/auth/logout", (req, res) => {

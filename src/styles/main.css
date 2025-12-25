@@ -4,16 +4,17 @@
 
 .mainContainer{
     width:80%;
-
+    
     height: 100vh;
     margin: auto;
-    margin-top:8vw;
+    margin-top:13vw;
 
 }
 .siteTitle{
     color:#484a4e;
      font-family: "Montserrat", sans-serif;
     font-weight:600;
+    margin-bottom: 15px;
     font-size: 1.1rem;
 }
 .cardsContainer{

@@ -5,72 +5,145 @@
 #menuContainer a{
 text-decoration: none;
 }
-.logoTitle{
-    font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: 4rem;
-  background:  #4b9fea;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
-  margin:0;
-  -webkit-text-stroke: 1px rgba(0, 0, 0, 0.3);
-}.logoTitle:hover{
-     background: #3c98e7;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-#miniTxt{
-    position: absolute;
-    z-index: 0;
-    font-size: 11px;
-    top:22px;
-    font-weight: 500;
-    background-color: rgb(104, 104, 104);
-     -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-    transform: rotate(-30deg);
 
+#menuContainer {
+  width: 100%;
+  margin-bottom: 15px;
 }
-.menuContent{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-     font-family: "Montserrat", sans-serif;
-      font-weight:400;
-    margin-bottom: 0;
+
+/* ===== TOP NAV ===== */
+.topNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
-.menuContent ul{
-    display:flex;
-    flex-direction:row;
-    padding: 0;
-    margin-top:0;
-    margin-bottom: 0;
-    
+
+/* ===== LOGO ===== */
+.logoTitle {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  margin: 0;
+  margin-left:;
 }
-.menuContent ul li{
-    list-style-type: none;
-    margin: 10px;
-    cursor: pointer;
- 
+
+.logoTitle a {
+  background: #3a82f7;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
 }
-.menuContent ul a{
-    text-decoration: none;
-    font-size: 1rem;
-    color:#4c4e52;
+
+.logoTitle a:hover {
+  background: #3A82F7;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-.menuContent ul a:hover{
-    color:#070707;
-    transition: 0.5s;
+
+#miniTxt {
+  position: absolute;
+  font-size: 11px;
+  top: 2.2em;
+  left:2em;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  transform: rotate(-30deg);
+  color: #F73340;
 }
-#logoutBtn{
-    background:none;
-      color:#4c4e52;
-    border: none;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1rem;
-    border-radius: 4px;
-    cursor: pointer;
+
+/* ===== NAV LINKS ===== */
+.menuContent ul {
+  display: flex;
+  list-style: none;
+  gap: 24px;
+  padding: 0;
+  margin: 0;
+}
+
+.menuContent a {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  color: #555;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.menuContent a:hover {
+  color: #2a5fcc;
+}
+
+/* Create link highlight */
+.createLink {
+  color: #f73340 !important;
+  font-weight: 700;
+}
+
+.createLink:hover {
+  color: #d43f3a !important;
+}
+
+/* ===== RIGHT SIDE ===== */
+.menuRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.loginLink {
+  font-family: "Montserrat", sans-serif;
+  text-decoration: none;
+  color: #555;
+  font-weight: 600;
+}
+
+/* ===== PROFILE ===== */
+#profileContainer {
+  position: relative;
+}
+
+#profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+#profilePic {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+/* ===== DROPDOWN ===== */
+#profileDropDown {
+  position: absolute;
+  right: 0;
+  margin-top:20px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+
+.dropdownBtn {
+  background: none;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.dropdownBtn:hover {
+  background: #f5f5f5;
 }
