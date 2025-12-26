@@ -1,154 +1,184 @@
-#cardsContainer{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    width:80%;
-    margin:auto;
-    margin-top:3vw;
+/* Main container - centered and responsive width */
+#cardsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1.2rem 1rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
 
+/* Grid of cards - responsive columns */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem 1.25rem;
+  width: 60%;
+  padding: 1rem 0;
 }
-.cardsGrid{
-    display:flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+
+/* Individual bingo card */
+.bingoCard {
+  background-color: white;
+  border: 2px solid #484a4e;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  max-width: 100%;
 }
-.yourBingoGrid{
-     display: grid;
+
+.bingoCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Bingo grid itself */
+.yourBingoGrid {
+  display: grid;
   grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
   background: white;
   padding: 8px;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
-.bingoCard{
-    margin:20px;
-    background-color: white;
-    border: 2px solid #484a4e;
-    border-radius: 12px;
-    padding: 5px;
+/* Each cell wrapper - now using % + min/max for better scaling */
+.div-wrapper {
+  position: relative;
+  aspect-ratio: 1 / 1;           /* perfect square */
+  min-width: 48px;               /* minimum readable size */
+  max-width: 100%;
+}
 
-}
-.div-wrapper{
-    position: relative;
-  width: 4vw;
-  height: 4vw;
-  margin: 2px;
-}
-.disCell{
-     border: 1px solid #484a4e;
-   position: absolute;
-  width: 100%;
-  height: 100%;
-  font-size: 0.9em;
-  font-weight: 350;
+/* The actual cell content */
+.disCell {
+  position: absolute;
+  inset: 0;
+  border: 1px solid #484a4e;
+  font-size: clamp(0.68rem, 2.5vw, 0.95rem);
+  font-weight: 400;
   text-align: center;
-  margin: 0;
-  outline: none;
   color: #1e293b;
-  transition: all 0.15s ease;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  white-space: wrap;
-  cursor: pointer;
-}.disCell.free {
-  background: linear-gradient(135deg, #3a82f7, #F73340);
+  padding: 4px;
+  overflow: hidden;
+  word-break: break-word;
+  hyphens: auto;
+  transition: all 0.15s ease;
+}
+
+.disCell.free {
+  background: linear-gradient(135deg, #3a82f7, #f73340);
   color: white;
   font-weight: 700;
-  font-size: 0.9em;
-  align-items: center;
-    justify-content: center;
+  font-size: clamp(0.75rem, 3vw, 1.1rem);
   border: none;
-  cursor: default;
-  white-space: nowrap;
+ 
 }
-.div-wrapper:disabled {
-  background-color: #bb0e0e;
-  color: #9e9e9e;
-  cursor: not-allowed;
+
+/* Marked cell (from previous play/mark mode) */
+.disCell.marked {
+  background-color: #d4d9ed !important;
 }
+
+.cross {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(1.8rem, 8vw, 3.2rem);
+  color: #dc3545;
+  opacity: 0.65;
+  pointer-events: none;
+  font-weight: bold;
+}
+
+/* Card info (date + buttons) */
 .cardInfo {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 12px;
-  padding: 0 8px;
+  padding: 10px 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
 }
 
 .created-at {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #666;
+  white-space: nowrap;
 }
 
 .card-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .btn {
-  font-size: 0.85rem;
-  padding: 5px 12px;
+  font-size: 0.82rem;
+  padding: 6px 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
-.btn-edit {
-  background-color: #3a82f7;
-  color: white;
+.btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
 }
+
 
 .btn-share {
   background-color: #28a745;
   color: white;
 }
 
+.btn-stop {
+  background-color: #fd7e14;
+  color: white;
+}
+
 .btn-save {
-  background-color: #3a82f7;
+  background-color:  #3a82f7;
   color: white;
 }
 
 .btn-cancel {
-  background-color: #e64253;
-  color: white;
-  margin-right: -5px;
-}
-
-.btn-delete {
-  background-color: #e64253;
+  background-color: #dc3545;
   color: white;
 }
-.yourBingoGrid.editing .div-wrapper {
-  background-color: #fff8e1;
+
+/* Editing / Playing mode visual feedback */
+.yourBingoGrid.playing .disCell.clickable:hover,
+.yourBingoGrid.editing .div-wrapper:hover {
+  background-color: #f0f8ff;
 }
 
-.edit-cell-input {
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  border: 2px solid #0066cc;
-  border-radius: 4px;
-  font-size: 0.95em;
-  padding: 2px;
-  box-sizing: border-box;
-}
-
-.edit-cell-input:focus {
-  outline: none;
-  border-color: #0056b3;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.25);
-}
-.cross {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2.8rem;
-  color: #dc3545;
-  opacity: 0.7;
-  pointer-events: none;
-  font-weight: bold;
+/* Small screens adjustments */
+@media (max-width: 480px) {
+  .cardInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .card-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .btn {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
 }

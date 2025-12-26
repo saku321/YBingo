@@ -1,5 +1,6 @@
 import {useState,useEffect} from 'react';
 import '../styles/yourCards.css';
+import { Link } from 'react-router';
 
 type CellData = { value: string; marked: boolean };
 type BingoCell = CellData;
@@ -212,6 +213,8 @@ const getMarkedSet = (boardId: string): Set<string> => {
 
               return (
                 <div key={board.boardId} className="bingoCard">
+                <Link to={`/card/${board.boardId}`} key={board.boardId} style={{ textDecoration: 'none' }}>
+
                   <div className={`yourBingoGrid ${isActive ? 'editing' : ''}`}>
                     {board.boardData.card.map((row, r) =>
                       row.map((cell, c) => {
@@ -238,18 +241,20 @@ const getMarkedSet = (boardId: string): Set<string> => {
                                   : undefined
                               }
                             >
-                              {cell.value}
+                              {isFree ? '2026' : cell.value}
                               {isMarked && <span className="cross">✗</span>}
                             </div>
                           </div>
                         );
                       })
                     )}
+                    
                   </div>
+                  </Link>
 
                   <div className="cardInfo">
                     <span className="created-at">
-                      {board.boardData.createdAt === "Unknown" && board.updatedAt ? 'Updated' : 'Created'}: {board.boardData.createdAt || board.updatedAt}
+                      {board.boardData.createdAt === "Unknown" && board.updatedAt ? 'Updated' : 'Created'}: {board.boardData.createdAt==="Unknown" ? board.updatedAt : board.boardData.createdAt}
                     </span>
 
                     <div className="card-actions">

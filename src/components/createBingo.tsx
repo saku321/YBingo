@@ -51,6 +51,16 @@ export default function CreateBingo(){
       console.log('createCard response', res.status, result);
       if(result.ok){
         setStatus("You Bingo Card is Saved!");
+        setCard(Array.from({ length: SIZE }, () =>
+          Array.from({ length: SIZE }, () => ({ value: "", marked: false }))
+        ));
+        setCard(prev =>
+      prev.map((row, r) =>
+        row.map((cell, c) =>
+          r === 2 && c === 2 ? { value: "2026", marked: false } : cell
+        )
+      )
+    );
       }
     }catch(err){
       console.error('submitCard error', err);

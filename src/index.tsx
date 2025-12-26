@@ -10,7 +10,7 @@ import CreateBingo from './components/createBingo';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './authProvider';
 import YourCards from './components/yourCards';
-
+import BingoCard from './components/bingoCard';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -30,6 +30,7 @@ root.render(
         <Route path="/bingoCreate" element={<CreateBingo />} />
         <Route path="/login" element={<Login />} />
          <Route path="/yourCards" element={<YourCards />} />
+         <Route path="/card/:cardId" element={<BingoCard />} />
       </Routes>
     </BrowserRouter>
     </AuthProvider>

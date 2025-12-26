@@ -6,7 +6,7 @@ const {nanoid}=require("nanoid");
 const { verify } = require('node:crypto');
 const jwt = require('jsonwebtoken');
 const { verifyGoogleToken,requireAuth } = require('./authHandler');
-const { findOrCreateUser,findUserById,findUserBingoBoards,findRecentBingoBoards,saveBingoBoard,editBingoBoard,deleteCard} = require('./databaseHandler');
+const { findOrCreateUser,findUserById,findUserBingoBoards,findRecentBingoBoards,saveBingoBoard,editBingoBoard,deleteCard,findCardById} = require('./databaseHandler');
 const cookieParser = require('cookie-parser');
 app.use(cors({
   origin: "http://localhost:3000",
@@ -66,7 +66,13 @@ app.post("/api/auth/checkLogin", requireAuth, async (req, res) => {
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
-  res.json(user);
+  const filterData={
+    
+    name:user.name,
+    picture:user.picture
+  }
+  
+  res.json(filterData);
 });
 app.post("/api/auth/logout", (req, res) => {
   res.clearCookie('auth_token', {
@@ -83,7 +89,7 @@ app.post('/api/createCard',requireAuth, async (req, res) => {
     const { card } = req.body;
     const owner= req.userId;
     if (!card) return res.status(400).json({ error: 'Missing card in request body' });
-    const cardID=nanoid();
+    const cardID=nanoid(7);
     const insertedId = await saveBingoBoard(cardID, {owner,card, createdAt: new Date() });
     return res.status(201).json({ ok: true, id: insertedId });
   } catch (err) {
@@ -102,7 +108,9 @@ app.post('/api/yourCards', requireAuth, async (req, res) => {
       boardData: {
         ...board.boardData,
         createdAt: board.boardData.createdAt ? new Date(board.boardData.createdAt).toLocaleDateString() : 'Unknown',
+     
       },
+      updatedAt: board.updatedAt ? new Date(board.updatedAt).toLocaleDateString() : 'Unknown',
     }));
 
     return res.status(200).json({ boards: formattedBoards });
@@ -152,6 +160,34 @@ app.post('/api/deleteCards', requireAuth, async (req, res) => {
     console.error('deleteCards error', err);
     return res.status(500).json({ error: 'Internal server error' });
 
+  }
+});
+
+app.get('/api/card/:cardId', async (req, res) => {
+  try {
+    const { cardId } = req.params;
+
+
+    const board = await findCardById(cardId,true);
+    if (!board) {
+      return res.status(404).json({ error: 'Card not found' });
+    }
+    
+    const filterData={
+      boardId:board.boardId,
+      boardData:{
+      ...board.boardData,
+      owner: board.ownerInfo,
+      },
+      createdAt:board.boardData.createdAt,
+    }
+
+  
+    // Optionally, remove sensitive info like owner email/ID if you want
+    return res.status(200).json({ filterData});
+  } catch (err) {
+    console.error('getCard error', err);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 

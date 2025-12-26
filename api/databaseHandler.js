@@ -100,7 +100,28 @@ async function findRecentBingoBoards(limit = 5) {
 
   return boards;
 }
-
+async function findCardById(boardId,withOwner) {
+  const db = await connect();
+  if(withOwner){
+    const card = await db.collection("bingoBoards").findOne({
+      boardId: boardId,
+    });
+    if(!card){
+      return null;
+    }
+    const userCollection = db.collection('users');
+    const user = await userCollection.findOne({ _id: new ObjectId(card.boardData.owner) });
+    
+    const ownerInfo={
+      name:user ? user.name : 'Unknown',
+      profilePic:user ? user.picture: null,
+    }
+    return {...card,ownerInfo };
+  }
+  return db.collection("bingoBoards").findOne({
+    boardId: boardId,
+  });
+}
 async function findUserById(userId) {
   const db = await connect();
   return db.collection("users").findOne({
@@ -145,8 +166,8 @@ module.exports = {
   findUserById,
   editBingoBoard,
   deleteCard,
-findUserByGoogleId,
+  findUserByGoogleId,
   findOrCreateUser,
-
+  findCardById,
   close
 };
