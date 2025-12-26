@@ -111,6 +111,7 @@ async function findRecentBingoBoards(limit) {
 
     result.push({
       boardData: board.boardData,
+      _id:board.boardId,
       ownerData: {
         name: user?.name || 'Unknown',
         picture: user?.picture || null

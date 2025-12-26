@@ -2,15 +2,12 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../styles/bingoCard.css';
 
-
 type CellData = { value: string; marked: boolean };
-type BingoCell = CellData;
-type BingoRow = BingoCell[];
-type BingoCard = BingoRow[]; // 2D array
+type BingoCard = CellData[][];
 
 interface OwnerInfo {
   name: string;
-  profilePic: string;
+  profilePic?: string;
 }
 
 interface BoardData {
@@ -22,10 +19,6 @@ interface BoardData {
 interface BingoBoard {
   boardId: string;
   boardData: BoardData;
-  createdAt: string;
-    updatedAt?: string;
-
-
 }
 
 export default function BingoCard() {
@@ -41,15 +34,12 @@ export default function BingoCard() {
         const res = await fetch(`${apiUrl}/api/card/${cardId}`);
         const data = await res.json();
         if (res.ok) {
-          const resData = data.filterData;
-
-          setBoard(resData);
-          console.log(resData);
+          setBoard(data.filterData);
         } else {
           setError(data.error || 'Card not found');
         }
       } catch (err) {
-        setError('Failed to fetch card');
+        setError('Failed to load bingo card');
       } finally {
         setLoading(false);
       }
@@ -58,46 +48,69 @@ export default function BingoCard() {
     if (cardId) fetchCard();
   }, [cardId]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <div className="loading">Loading bingo card...</div>;
+  if (error) return <div className="error">{error}</div>;
   if (!board) return null;
 
+  const { boardData } = board;
+  const createdDate = new Date(boardData.createdAt).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).replace(/\//g, '.');
+
   return (
-    <div id="cardsContainer">
-  <h1>Shared Bingo Card</h1>
+    <div className="bingo-detail-page">
+      {/* 1. Big bingo grid */}
+      <div className="bingo-main">
+        <h1 className="page-title">Bingo Card</h1>
 
-  <div className="yourBingoGrid">
-    {board.boardData.card.map((row, r) =>
-      row.map((cell, c) => (
-        <div key={`${r}-${c}`} className="textarea-wrapper">
-          <textarea
-            className={`disCell ${cell.marked ? 'marked' : ''}`}
-            value={cell.value}
-            readOnly
-          />
+        <div className="bingoGrid">
+          {boardData.card.map((row, r) =>
+            row.map((cell, c) => {
+              const isCenter = r === 2 && c === 2;
+              const isMarked = cell.marked;
+
+              return (
+                <div key={`${r}-${c}`} className="cell-wrapper">
+                  <div
+                    className={`disCell ${isCenter ? 'free' : ''} ${isMarked ? 'marked' : ''}`}
+                  >
+                    {isCenter ? '2026' : cell.value}
+                    {isMarked && <span className="cross">✕</span>}
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
-      ))
-    )}
-  </div>
+      </div>
 
-  <div className="cardInfo">
-    <span>Created: {board.boardData.createdAt}</span>
-    {board.boardData.owner && (
-      <span> • by {board.boardData.owner.name}</span>
-    )}
-  </div>
+      {/* 2. Small creator + date – left aligned */}
+      <div className="meta-info">
+        <div className="creator">@ {boardData.owner?.name || 'Anonymous'}</div>
+        <div className="date">{createdDate}</div>
+      </div>
 
-  {/* Comments section placeholder - ready for future implementation */}
-  <div className="comments-section">
-    <h2>Comments</h2>
-    {/* 
-      When you're ready to add comments, you can put here:
-      - list of comments
-      - comment input form
-      - loading state, etc.
-    */}
-    <p className="no-comments-yet">No comments yet. Be the first to comment!</p>
-  </div>
-</div>
+      {/* 3. Comments section with small form */}
+      <div className="comments-section">
+        <h2 className="comments-title">comments:</h2>
+
+        <div className="comments-placeholder">
+          (comments will appear here)
+        </div>
+
+        <form className="comment-form">
+          <textarea
+            className="comment-input"
+            placeholder="Write your comment..."
+            rows={3}
+          />
+          <button type="submit" className="send-btn">
+            Send
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }

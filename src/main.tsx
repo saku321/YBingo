@@ -24,7 +24,7 @@ export default function Main() {
         {card.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             const isFree =
-              cell.value.toLowerCase() === 'free' ||
+              cell.value.toLowerCase() === '2026' ||
               (rowIndex === 2 && colIndex === 2);
 
             return (
@@ -34,7 +34,7 @@ export default function Main() {
                     cell.marked ? 'marked' : ''
                   }`}
                 >
-                  {cell.value}
+                  {rowIndex === 2 && colIndex === 2 ? '2026' : cell.value}
                   {cell.marked && <span className="cross">✕</span>}
                 </div>
               </div>
@@ -67,95 +67,122 @@ export default function Main() {
   const placeholders = Array.from({ length: 6 });
 
   return (
-    <div className="mainContainer">
-<section className="hero">
-  <div className="hero-bingo-preview">
-    <div className="bingo-3d-wrapper">
-      <img
-        src={testCard}
-        alt="3D Example Bingo Card"
-        className="bingo-3d-image"
-      />
-    </div>
-  </div>
-
-  <div className="hero-content">
-    <h1 className="hero-title">Create Your Bingo Card for Next Year</h1>
-    <p className="hero-subtitle">
-  "Wow, that wasn't on my Bingo card this year"<br /><br />
-  Now it is : 
-    </p>
-
-    <div className="hero-actions">
-      <Button
-        component={Link}
-        to="/bingoCreate"
-        variant="contained"
-        size="large"
-        className="hero-button"
-      >
-        Create Your BINGO →
-      </Button>
-    </div>
-  </div>
-</section>
-
-      <section className="recent-section">
-        <h2 className="siteTitle">Recently Created Cards</h2>
-
-        <div className="cardsContainer">
-          {(loading ? placeholders : boards).map((board, index) => (
-            <div key={index} className="bingocard">
-              <Card sx={{ maxWidth: 345, borderRadius: '16px', overflow: 'hidden' }}>
-                <CardHeader
-                  avatar={
-                    <Avatar
-                      src={!loading ? board?.boardData?.ownerPicture : undefined}
-                      sx={{ bgcolor: red[500] }}
-                    >
-                      {!loading && board?.boardData?.owner?.[0]}
-                    </Avatar>
-                  }
-                  title={!loading ? board?.boardData?.owner || 'Anonymous' : 'Loading...'}
-                  subheader={
-                  !loading
-                    ? board.boardData.createdAt
-                    : 'Loading...'
-                }
-                />
-
-                <div className="bingoCardBody">
-                  <Link
-                    to={loading ? '#' : `/card/${board?._id}`}
-                    style={{
-                      textDecoration: 'none',
-                      color: 'inherit',
-                      pointerEvents: loading ? 'none' : 'auto',
-                      cursor: loading ? 'default' : 'pointer',
-                      display: 'block',
-                      width: '100%',
-                    }}
-                  >
-                    {loading ? (
-                      <img
-                        src={testCard}
-                        alt="Loading preview"
-                        style={{
-                          width: '100%',
-                          height: 'auto',
-                          borderRadius: '12px',
-                        }}
-                      />
-                    ) : (
-                      <BingoGrid card={board?.boardData?.card} />
-                    )}
-                  </Link>
-                </div>
-              </Card>
-            </div>
-          ))}
+    <div>
+        <div className="mainContainer">
+    <section className="hero">
+    <div className="hero-bingo-preview">
+        <div className="bingo-3d-wrapper">
+        <img
+            src={testCard}
+            alt="3D Example Bingo Card"
+            className="bingo-3d-image"
+        />
         </div>
-      </section>
     </div>
+
+    <div className="hero-content">
+        <h1 className="hero-title">Create Your Bingo Card for Next Year</h1>
+        <p className="hero-subtitle">
+    "Wow, that wasn't on my Bingo card this year"<br /><br />
+    Now it can be : 
+        </p>
+
+        <div className="hero-actions">
+        <Button
+            component={Link}
+            to="/bingoCreate"
+            variant="contained"
+            size="large"
+            className="hero-button"
+        >
+            Create Your BINGO →
+        </Button>
+        </div>
+    </div>
+    </section>
+
+        <section className="recent-section">
+            <h2 className="siteTitle">Recently Created Cards : </h2>
+
+            <div className="cardsContainer">
+            {(loading ? placeholders : boards).map((board, index) => (
+                <div key={index} className="bingocard">
+                <Card sx={{ maxWidth: 345, borderRadius: '16px', overflow: 'hidden' }}>
+                    <CardHeader
+                    avatar={
+                        <Avatar
+                        src={!loading ? board?.boardData?.ownerPicture : undefined}
+                        sx={{ bgcolor: red[500] }}
+                        >
+                        {!loading && board?.boardData?.owner?.[0]}
+                        </Avatar>
+                    }
+                    title={!loading ? board?.boardData?.owner || 'Anonymous' : 'Loading...'}
+                    subheader={
+                    !loading
+                        ? board.boardData.createdAt
+                        : 'Loading...'
+                    }
+                    />
+
+                    <div className="bingoCardBody">
+                    
+                        {loading ? (
+                        <img
+                            src={testCard}
+                            alt="Loading preview"
+                            style={{
+                            width: '100%',
+                            height: 'auto',
+                            borderRadius: '12px',
+                            }}
+                        />
+                        ) : (
+                            <div>
+                            <a
+                                href={`/card/${board.boardData?._id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    textDecoration: 'none',
+                                    color: 'inherit',
+                                    display: 'block',
+                                    cursor: 'pointer',
+                                }}
+                                >
+                            <BingoGrid card={board.boardData.card} />
+                            </a>
+                        </div>
+                        )}
+                 
+                    </div>
+                </Card>
+                </div>
+            ))}
+            </div>
+        </section>
+    
+        </div>
+        <footer className="site-footer">
+    <div className="footer-container">
+        <div className="footer-brand">
+        <h3 className="footer-logo">Yearly-Bingo</h3>
+        <p className="footer-tagline">
+           readme
+        </p>
+        </div>
+
+        <div className="footer-bottom">
+            <div className="footer-links">
+            <Link to="/bingoCreate">Create Card</Link>
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/terms">Terms</Link>
+        </div>
+        <p>© {new Date().getFullYear()} Yearly-Bingo</p>
+        
+        </div>
+    </div>
+    </footer>
+</div>
   );
 }

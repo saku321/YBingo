@@ -197,15 +197,17 @@ app.get("/api/recentCards", async (req, res) => {
 
       const formattedBoards = boards.map((board) => ({
       boardData: {
+           _id:board._id,
         ...board.boardData,
         owner: board.ownerData.name,
         ownerPicture: board.ownerData.picture,
         createdAt: board.boardData.createdAt
+     
           ? new Date(board.boardData.createdAt).toLocaleDateString()
           : 'Unknown',
       },
     }));
-
+    
     return res.status(200).json({ boards: formattedBoards });
   } catch (err) {
     console.error('recentCards error', err);

@@ -199,6 +199,8 @@
   display: flex;
   justify-content: center;
   position: relative;
+}.hero-subtitle{
+    margin-bottom:5px;
 }
 
 .hero-content {
@@ -215,7 +217,9 @@
   width: 100%;
   max-width: 380px;
   border-radius: 16px;
-
+box-shadow: 
+  -12px 12px 8px rgba(0, 0, 0, 0.14),
+  -6px  6px  4px rgba(0, 0, 0, 0.10);
   transform: rotateY(24deg) rotateX(12deg) scale(0.94);   /* ← now +24deg = faces right */
   transition: transform 0.6s ease;
 }
@@ -226,11 +230,80 @@
 .hero-title {
   font-family: 'Bebas Neue', sans-serif;  
   font-weight: 400;                       
-  font-size: clamp(2.8rem, 8vw, 5.5rem);  
+ font-size: clamp(2.4rem, 3.5vw, 5rem);
   letter-spacing: -0.02em;               
   text-transform: uppercase;              
   line-height: 0.95;
 }
+
+/*Footer*/
+
+.site-footer {
+  background: #202839;
+  width:100%;
+  color: #e2e8f0;
+  padding: 3rem 0 2rem;
+  margin-top: 4rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.footer-container {
+  width: 92%;
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-brand {
+  margin-bottom: 1.5rem;
+}
+
+.footer-logo {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 0.6rem;
+  color: #3b82f6;
+}
+
+.footer-tagline {
+  font-size: 1rem;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.footer-bottom {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.footer-bottom p {
+  margin: 0.4rem 0;
+}
+
+.footer-links {
+  margin-bottom: 1rem;
+}
+
+.footer-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  margin: 0 1.2rem;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #3b82f6;
+}
+
+/* Mobile — already centered, no changes needed */
+@media (max-width: 768px) {
+  .footer-links-simple a {
+    margin: 0 0.8rem;
+    display: inline-block;
+  }
+}
+
+
 /* Mobile: stack vertically, image on top */
 @media (max-width: 1024px) {
   .hero {
