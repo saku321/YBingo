@@ -87,19 +87,40 @@ async function findUserBingoBoards(ownerQuery) {
   const boards = await collection.find({'boardData.owner': owner}).toArray();
   return boards;
 }
-async function findRecentBingoBoards(limit = 5) {
+async function findRecentBingoBoards(limit) {
   const db = await connect();
-  const collection = db.collection('bingoBoards');
-  const boards = await collection.find().sort({ createdAt: -1 }).limit(limit).toArray();
-  
-  const creator = db.collection('users');
-  for (let board of boards) {
-    const user = await creator.findOne({ _id: new ObjectId(board.boardData.owner) });
-    board.ownerName = user ? user.name : 'Unknown';
+  const boardsCollection = db.collection('bingoBoards');
+  const usersCollection = db.collection('users');
+
+  const boards = await boardsCollection
+    .find()
+    .sort({ "boardData.createdAt": -1 })
+    .limit(limit)
+    .toArray();
+
+  const result = [];
+
+  for (const board of boards) {
+    let user = null;
+
+    if (board.boardData?.owner) {
+      user = await usersCollection.findOne({
+        _id: new ObjectId(board.boardData.owner)
+      });
+    }
+
+    result.push({
+      boardData: board.boardData,
+      ownerData: {
+        name: user?.name || 'Unknown',
+        picture: user?.picture || null
+      }
+    });
   }
 
-  return boards;
+  return result;
 }
+
 async function findCardById(boardId,withOwner) {
   const db = await connect();
   if(withOwner){

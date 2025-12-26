@@ -191,6 +191,27 @@ app.get('/api/card/:cardId', async (req, res) => {
   }
 });
 
+app.get("/api/recentCards", async (req, res) => {
+  try {
+    const boards = await findRecentBingoBoards(5);
+
+      const formattedBoards = boards.map((board) => ({
+      boardData: {
+        ...board.boardData,
+        owner: board.ownerData.name,
+        ownerPicture: board.ownerData.picture,
+        createdAt: board.boardData.createdAt
+          ? new Date(board.boardData.createdAt).toLocaleDateString()
+          : 'Unknown',
+      },
+    }));
+
+    return res.status(200).json({ boards: formattedBoards });
+  } catch (err) {
+    console.error('recentCards error', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 app.listen(3001, () => {

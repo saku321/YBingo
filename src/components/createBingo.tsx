@@ -92,7 +92,7 @@ export default function CreateBingo(){
                   disabled={r === 2 && c === 2} 
                   minLength={3}
                   maxLength={20}
-                  placeholder={r === 2 && c === 2 ? '' : 'Idea'}
+                  placeholder={r === 2 && c === 2 ? '' : ''}
                   onChange={(e) => updateCell(r, c, e.target.value)}
                 />
               </div>
