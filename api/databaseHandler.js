@@ -49,22 +49,37 @@ async function saveBingoBoard(boardId,boardData) {
   return res.insertedId;
 }
 
-async function editBingoBoard(boardId, ownerId, newBoardData) {
+async function editBingoBoard(boardId,ownerId, newBoardData) {
   const db = await connect();
   const coll = db.collection('bingoBoards');
+
+  const updatedBoardData = {
+    ...newBoardData,
+    owner: ownerId,
+  };
 
   const res = await coll.updateOne(
     { 
       boardId,                  // match by board ID
       'boardData.owner': ownerId // match by owner
     },
-    { $set: { boardData: newBoardData, updatedAt: new Date() } }
+    { $set: { boardData: updatedBoardData, updatedAt: new Date() } }
   );
 
   return res.modifiedCount > 0 ? boardId : null;
 }
 
-
+async function deleteCard(boardId, ownerId) {
+  const db = await connect();
+  const coll = db.collection('bingoBoards');
+  const res = await coll.deleteOne(
+    {
+      boardId,
+      'boardData.owner': ownerId
+    }
+  );
+  return res.deletedCount > 0;
+}
 async function findUserBingoBoards(ownerQuery) {
   const db = await connect();
   const collection = db.collection('bingoBoards');
@@ -129,6 +144,7 @@ module.exports = {
   findRecentBingoBoards,
   findUserById,
   editBingoBoard,
+  deleteCard,
 findUserByGoogleId,
   findOrCreateUser,
 

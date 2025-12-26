@@ -6,7 +6,7 @@ const {nanoid}=require("nanoid");
 const { verify } = require('node:crypto');
 const jwt = require('jsonwebtoken');
 const { verifyGoogleToken,requireAuth } = require('./authHandler');
-const { findOrCreateUser,findUserById,findUserBingoBoards,findRecentBingoBoards,saveBingoBoard,editBingoBoard} = require('./databaseHandler');
+const { findOrCreateUser,findUserById,findUserBingoBoards,findRecentBingoBoards,saveBingoBoard,editBingoBoard,deleteCard} = require('./databaseHandler');
 const cookieParser = require('cookie-parser');
 app.use(cors({
   origin: "http://localhost:3000",
@@ -96,7 +96,6 @@ app.post('/api/yourCards', requireAuth, async (req, res) => {
   try {
     const owner = req.userId;
     const boards = await findUserBingoBoards({ owner });
-
     const formattedBoards = boards.map((board, idx) => ({
       ...board,
       _id: idx,
@@ -132,6 +131,27 @@ app.post('/api/editCard', requireAuth, async (req, res) => {
   catch (err) {
     console.error('editCard error', err);
     return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+app.post('/api/deleteCards', requireAuth, async (req, res) => {
+  try {
+    const { boardIds } = req.body;  
+    const owner = req.userId;
+    if (!boardIds || !Array.isArray(boardIds) || boardIds.length === 0) {
+      return res.status(400).json({ error: 'Missing or invalid boardIds in request body' });
+    }
+    let deletedCount = 0;
+    for (const boardId of boardIds) {
+      const success = await deleteCard(boardId, owner);
+      if (success) {
+        deletedCount++;
+      }
+    }
+    return res.status(200).json({ ok: true, deletedCount });
+  } catch (err) {
+    console.error('deleteCards error', err);
+    return res.status(500).json({ error: 'Internal server error' });
+
   }
 });
 

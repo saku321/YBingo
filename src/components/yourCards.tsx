@@ -9,13 +9,15 @@ type BingoCard = BingoRow[]; // 2D array
 interface BoardData {
   owner: string;
   card: BingoCard;
-    createdAt: string;
+    createdAt: string | null;
 }
 
 interface BingoBoard {
   boardId: string;
   boardData: BoardData;
   createdAt: string;
+    updatedAt?: string;
+
 }
 
 
@@ -110,6 +112,20 @@ const getMarkedSet = (boardId: string): Set<string> => {
       });console.log(res);
       
       if (res.ok) {
+        // Update the cards state with the new marked values
+        setCards((prev) =>
+          prev.map((b) =>
+            b.boardId === boardId
+              ? {
+                  ...b,
+                  boardData: {
+                    ...b.boardData,
+                    card: updatedCard,
+                  },
+                }
+              : b
+          )
+        );
         // Keep the current marked state
         setSavedMarkedCells((prev) => {
           const updated = { ...prev };
@@ -144,6 +160,26 @@ const getMarkedSet = (boardId: string): Set<string> => {
       return updated;
     });
   };
+  const handleDelete = async (boardId: string) => {
+    try {
+        const res = await fetch(`${apiUrl}/api/deleteCards`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                boardIds: [boardId],
+            }),
+        });
+        if (res.ok) {
+            setCards((prev) => prev.filter((board) => board.boardId !== boardId));
+        }
+
+    } catch (err) {
+        console.error('Error deleting cards:', err);
+    }
+    };
   useEffect(() => {
     async function getCards() {
       try {
@@ -159,7 +195,7 @@ const getMarkedSet = (boardId: string): Set<string> => {
     }
 
     getCards();
-  }, [apiUrl]);
+  }, [apiUrl]);console.log(cards);
 
   return (
     <div id="cardsContainer">
@@ -180,8 +216,8 @@ const getMarkedSet = (boardId: string): Set<string> => {
                     {board.boardData.card.map((row, r) =>
                       row.map((cell, c) => {
                         const isFree = r === 2 && c === 2;
-                        const isMarked = marked.has(`${r}-${c}`);
-                      
+                        const isMarked = isActive ? marked.has(`${r}-${c}`) : cell.marked;
+                        
 
                         return (
                           <div
@@ -213,7 +249,7 @@ const getMarkedSet = (boardId: string): Set<string> => {
 
                   <div className="cardInfo">
                     <span className="created-at">
-                      Created: {board.boardData.createdAt}
+                      {board.boardData.createdAt === "Unknown" && board.updatedAt ? 'Updated' : 'Created'}: {board.boardData.createdAt || board.updatedAt}
                     </span>
 
                     <div className="card-actions">
@@ -227,7 +263,7 @@ const getMarkedSet = (boardId: string): Set<string> => {
                           </button>
                               <button
                             className="btn btn-delete"
-                            onClick={() => handleCancel(board.boardId)}
+                            onClick={() => handleDelete(board.boardId)}
                           >
                             Delete
                           </button>
