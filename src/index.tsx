@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CreateBingo from './components/createBingo';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './authProvider';
+import YourCards from './components/yourCards';
 
 
 const root = ReactDOM.createRoot(
@@ -28,6 +29,7 @@ root.render(
         <Route path="/" element={<Main />} />
         <Route path="/bingoCreate" element={<CreateBingo />} />
         <Route path="/login" element={<Login />} />
+         <Route path="/yourCards" element={<YourCards />} />
       </Routes>
     </BrowserRouter>
     </AuthProvider>

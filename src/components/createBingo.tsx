@@ -1,21 +1,24 @@
 import {useState,useEffect} from 'react';
 import '../styles/bingoCreate.css';
 import Button from '@mui/material/Button'
-type BingoCard=string[][];
+
+type CellData = { value: string; marked: boolean };
+type BingoCard = CellData[][];
 
 export default function CreateBingo(){
     const SIZE =5;
     const [status,setStatus] =useState("");
+    const apiUrl = process.env.REACT_APP_API_DOMAIN || ''
     const [card,setCard] = useState<BingoCard>(
         Array.from({ length: SIZE }, () =>
-        Array.from({ length: SIZE }, () => "")
+        Array.from({ length: SIZE }, () => ({ value: "", marked: false }))
     )
     ) 
     function updateCell(row: number, col: number, value: string) {
         setCard(prev =>
         prev.map((r, rIdx) =>
             rIdx === row
-            ? r.map((c, cIdx) => (cIdx === col ? value : c))
+            ? r.map((c, cIdx) => (cIdx === col ? { ...c, value } : c))
             : r
         )
     );
@@ -28,19 +31,20 @@ export default function CreateBingo(){
        for (let r = 0; r < SIZE; r++) {
     for (let c = 0; c < SIZE; c++) {
       if (r === 2 && c === 2) continue; // skip center
-      if (card[r][c].trim() === "") {
+      if (card[r][c].value.trim() === ""|| card[r][c].value.length<3) {
         emptyCells++;
       }
     }
   }
     if(emptyCells>0){
-      setStatus(`Please fill the card fully.`);
+      setStatus(`Fill all cells with at least 3 characters`);
       return;
     }
-      const res = await fetch("http://localhost:3001/api/createCard",{
+      const res = await fetch(`${apiUrl}/api/createCard`,{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ card,owner:"s" })
+        body: JSON.stringify({ card }),
+        credentials:"include",
         
       });
       const result = await res.json().catch(() => null);
@@ -56,7 +60,7 @@ export default function CreateBingo(){
     setCard(prev =>
       prev.map((row, r) =>
         row.map((cell, c) =>
-          r === 2 && c === 2 ? "2026" : cell
+          r === 2 && c === 2 ? { value: "2026", marked: false } : cell
         )
       )
     );
@@ -74,9 +78,10 @@ export default function CreateBingo(){
 
                 <textarea
                   className={`cell ${r === 2 && c === 2 ? 'free' : ''}`}
-                  value={cell}
+                  value={cell.value}
                   disabled={r === 2 && c === 2} 
-                  maxLength={40}
+                  minLength={3}
+                  maxLength={20}
                   placeholder={r === 2 && c === 2 ? '' : 'Idea'}
                   onChange={(e) => updateCell(r, c, e.target.value)}
                 />

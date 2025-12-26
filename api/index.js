@@ -2,12 +2,11 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { saveBingoBoard } = require('./databaseHandler');
 const {nanoid}=require("nanoid");
 const { verify } = require('node:crypto');
 const jwt = require('jsonwebtoken');
 const { verifyGoogleToken,requireAuth } = require('./authHandler');
-const { findOrCreateUser,findUserById } = require('./databaseHandler');
+const { findOrCreateUser,findUserById,findUserBingoBoards,findRecentBingoBoards,saveBingoBoard,editBingoBoard} = require('./databaseHandler');
 const cookieParser = require('cookie-parser');
 app.use(cors({
   origin: "http://localhost:3000",
@@ -78,11 +77,11 @@ app.post("/api/auth/logout", (req, res) => {
   return res.status(200).json({ ok: true });
 });
 
-app.post('/api/createCard', async (req, res) => {
+app.post('/api/createCard',requireAuth, async (req, res) => {
   try {
    
     const { card } = req.body;
-    const owner= req.body.owner;
+    const owner= req.userId;
     if (!card) return res.status(400).json({ error: 'Missing card in request body' });
     const cardID=nanoid();
     const insertedId = await saveBingoBoard(cardID, {owner,card, createdAt: new Date() });
@@ -92,6 +91,51 @@ app.post('/api/createCard', async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+app.post('/api/yourCards', requireAuth, async (req, res) => {
+  try {
+    const owner = req.userId;
+    const boards = await findUserBingoBoards({ owner });
+
+    const formattedBoards = boards.map((board, idx) => ({
+      ...board,
+      _id: idx,
+      boardData: {
+        ...board.boardData,
+        createdAt: board.boardData.createdAt ? new Date(board.boardData.createdAt).toLocaleDateString() : 'Unknown',
+      },
+    }));
+
+    return res.status(200).json({ boards: formattedBoards });
+  } catch (err) {
+    console.error('yourCards error', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/editCard', requireAuth, async (req, res) => { 
+  try {
+    const { boardId, newData } = req.body;
+    const owner = req.userId;
+    if (!boardId || !newData) {
+      return res.status(400).json({ error: 'Missing cardId or newCard in request body' });
+    }
+
+    const updatedId = await editBingoBoard(boardId, owner, { card: newData });
+
+    if (!updatedId) {
+      return res.status(404).json({ error: "Card not found or you're not the owner" });
+    }
+
+    return res.status(200).json({ ok: true, id: updatedId });
+  }
+  catch (err) {
+    console.error('editCard error', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 app.listen(3001, () => {
   console.log('server running on 3001 port');

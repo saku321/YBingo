@@ -25,26 +25,66 @@ async function connect() {
 }
 
 async function saveBingoBoard(boardId,boardData) {
-//joku validaatio tähä
   const db = await connect();
+
+
   const coll = db.collection('bingoBoards');
+  const existing = await coll.findOne({ boardId });
+  if (existing) {
+    throw new Error('Board with this ID already exists');
+  }
+  const count = await coll.countDocuments({ 'boardData.owner': boardData.owner });
+
+  if (count >= 10) {
+    return "User limit reached";
+  }
 
   const doc = {
     boardId,
     boardData,
-    createdAt: new Date()
+  
   };
 
   const res = await coll.insertOne(doc);
   return res.insertedId;
 }
 
-
-async function getBingoBoards(query = {}) {
+async function editBingoBoard(boardId, ownerId, newBoardData) {
   const db = await connect();
-  return db.collection('bingoBoards').find(query).toArray();
+  const coll = db.collection('bingoBoards');
+
+  const res = await coll.updateOne(
+    { 
+      boardId,                  // match by board ID
+      'boardData.owner': ownerId // match by owner
+    },
+    { $set: { boardData: newBoardData, updatedAt: new Date() } }
+  );
+
+  return res.modifiedCount > 0 ? boardId : null;
 }
 
+
+async function findUserBingoBoards(ownerQuery) {
+  const db = await connect();
+  const collection = db.collection('bingoBoards');
+  const owner=ownerQuery.owner;
+  const boards = await collection.find({'boardData.owner': owner}).toArray();
+  return boards;
+}
+async function findRecentBingoBoards(limit = 5) {
+  const db = await connect();
+  const collection = db.collection('bingoBoards');
+  const boards = await collection.find().sort({ createdAt: -1 }).limit(limit).toArray();
+  
+  const creator = db.collection('users');
+  for (let board of boards) {
+    const user = await creator.findOne({ _id: new ObjectId(board.boardData.owner) });
+    board.ownerName = user ? user.name : 'Unknown';
+  }
+
+  return boards;
+}
 
 async function findUserById(userId) {
   const db = await connect();
@@ -59,6 +99,10 @@ async function findUserByGoogleId(googleId) {
 
 async function createUser(userData) {
   const db = await connect();
+  const checkExisting = await findUserByGoogleId(userData.googleId);
+  if (checkExisting) {
+    return checkExisting._id;
+  }
   const res = await db.collection('users').insertOne(userData);
   return res.insertedId;
 }
@@ -81,8 +125,10 @@ async function close() {
 module.exports = {
   connect,
   saveBingoBoard,
-  getBingoBoards,
+  findUserBingoBoards,
+  findRecentBingoBoards,
   findUserById,
+  editBingoBoard,
 findUserByGoogleId,
   findOrCreateUser,
 

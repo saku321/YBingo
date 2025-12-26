@@ -60,13 +60,13 @@ export default function Menu(){
 
         {isLoggedIn && (
           <li>
-            <Link to="/">Your Cards</Link>
+            <Link to="/yourCards">Your Cards</Link>
           </li>
         )}
       </ul>
     </nav>
 
-    {/* RIGHT: PROFILE / LOGIN */}
+  
     <div className="menuRight">
       {isLoggedIn ? (
         <div id="profileContainer" ref={profileRef}>
