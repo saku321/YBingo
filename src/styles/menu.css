@@ -46,17 +46,6 @@ text-decoration: none;
   -webkit-text-fill-color: transparent;
 }
 
-#miniTxt {
-  position: absolute;
-  font-size: 11px;
-  top: 2.2em;
-  left:2em;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 500;
-  transform: rotate(-30deg);
-  color: #1a1a1a;
-}
-
 /* ===== NAV LINKS ===== */
 .menuContent ul {
   display: flex;

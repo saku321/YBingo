@@ -5,3 +5,31 @@
     justify-content: center;
     height: 50vh;
 }
+#twitterLoginBtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    width:60%;
+    color: #ffffff;
+    background-color: #000000; /* X's primary black */
+    border: none;
+    border-radius: 9999px; /* Pill-shaped, common for modern buttons */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.login-with-x:hover {
+    background-color: #1a1a1a;
+}
+
+.login-with-x:active {
+    background-color: #333333;
+}
+.twitter-Logo{
+     width: 20px;
+    height: 20px;
+}

@@ -9,13 +9,15 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './styles/bingoCard.css';
 import PopularIdeas from './components/popularIdeas';
+import { useAuth } from './authProvider';
 
 export default function Main() {
   const apiUrl = process.env.REACT_APP_API_DOMAIN || '';
 
   const [boards, setBoards] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-console.log(boards);
+  const { isLoggedIn } = useAuth();
+
   function BingoGrid({
     card,
   }: {
@@ -87,14 +89,14 @@ console.log(boards);
     <div className="hero-content">
         <h1 className="hero-title">Create Your Bingo Card for Next Year</h1>
         <p className="hero-subtitle">
-    "Wow, that wasn't on my Bingo card this year"<br /><br />
+    "That wasn't on my Bingo card this year"<br /><br />
     Now it can be : 
         </p>
 
         <div className="hero-actions">
         <Button
             component={Link}
-            to="/bingoCreate"
+            to={isLoggedIn ? `/bingoCreate` : "/login"}
             variant="contained"
             size="large"
             className="hero-button"
@@ -168,24 +170,24 @@ console.log(boards);
     
         </div>
         <footer className="site-footer">
-    <div className="footer-container">
-        <div className="footer-brand">
-        <h3 className="footer-logo">Yearly-Bingo</h3>
-        <p className="footer-tagline">
-           readme
-        </p>
-        </div>
+        <div className="footer-container">
+            <div className="footer-brand">
+              <h3 className="footer-logo">Yearly-Bingo</h3>
+              <p className="footer-tagline">
+                readme
+              </p>
+            </div>
 
-        <div className="footer-bottom">
-            <div className="footer-links">
-            <Link to="/bingoCreate">Create Card</Link>
-            <Link to="/privacy">Privacy</Link>
-            <Link to="/terms">Terms</Link>
+            <div className="footer-bottom">
+                <div className="footer-links">
+                <Link to="/bingoCreate">Create Card</Link>
+                <Link to="/privacy">Privacy</Link>
+                <Link to="/terms">Terms</Link>
+            </div>
+            <p>© {new Date().getFullYear()} Yearly-Bingo</p>
+            
+            </div>
         </div>
-        <p>© {new Date().getFullYear()} Yearly-Bingo</p>
-        
-        </div>
-    </div>
     </footer>
 </div>
   );

@@ -158,28 +158,80 @@ async function findUserById(userId) {
   return db.collection("users").findOne({
     _id: new ObjectId(userId),
   });
+  
 }
 async function findUserByGoogleId(googleId) {
   const db = await connect();
   return db.collection('users').findOne({googleId });
 }
+async function findUserByTwitterId(twitterId) {
+  const db = await connect();
+  return db.collection('users').findOne({twitterId });
+}
+
 
 async function createUser(userData) {
   const db = await connect();
-  const checkExisting = await findUserByGoogleId(userData.googleId);
-  if (checkExisting) {
-    return checkExisting._id;
+
+  if (!userData.googleId && !userData.twitterId) {
+    throw new Error("User data must contain at least one provider ID (googleId or twitterId)");
+  }
+
+  let existingUser = null;
+
+  if (userData.googleId) {
+    existingUser = await findUserByGoogleId(userData.googleId);
+  }
+  
+  if (!existingUser && userData.twitterId) {
+    existingUser = await findUserByTwitterId(userData.twitterId);
+  }
+
+  if (existingUser) {
+    return existingUser._id;
   }
   const res = await db.collection('users').insertOne(userData);
   return res.insertedId;
 }
-async function findOrCreateUser(userData) {
-  let user = await findUserById(userData.userId);
-  if (!user) {
-    const result = await createUser(userData);
-    user = await findUserById(result);
+async function findOrCreateUser(providerData) {
+  // IMPORTANT: We no longer use userData.userId — it's not reliable here
+  let user = null;
+
+  // Try to find existing user by any provided provider ID
+  if (providerData.googleId) {
+    user = await findUserByGoogleId(providerData.googleId);
   }
-  return user;
+  
+  if (!user && providerData.twitterId) {
+    user = await findUserByTwitterId(providerData.twitterId);
+  }
+
+  // If we found the user → return it (and optionally update profile info)
+  if (user) {
+    // Optional: Update name/picture if they changed
+    const updates = {};
+    if (providerData.name && providerData.name !== user.name) {
+      updates.name = providerData.name;
+    }
+    if (providerData.picture && providerData.picture !== user.picture) {
+      updates.picture = providerData.picture;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await db.collection('users').updateOne(
+        { _id: user._id },
+        { $set: { ...updates, updatedAt: new Date() } }
+      );
+      // Update local object too
+      Object.assign(user, updates);
+    }
+
+    return user;
+  }
+
+  // No existing user → create new
+  const newUserId = await createUser(providerData);
+  return await findUserById(newUserId);
 }
 async function close() {
   if (_client) {
@@ -198,6 +250,7 @@ module.exports = {
   editBingoBoard,
   deleteCard,
   findUserByGoogleId,
+  findUserByTwitterId,
   findOrCreateUser,
   findCardById,
   close

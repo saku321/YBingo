@@ -6,8 +6,12 @@ const {nanoid}=require("nanoid");
 const { verify } = require('node:crypto');
 const jwt = require('jsonwebtoken');
 const { verifyGoogleToken,requireAuth } = require('./authHandler');
-const { findOrCreateUser,findUserById,findUserBingoBoards,findRecentBingoBoards,saveBingoBoard,editBingoBoard,deleteCard,findCardById} = require('./databaseHandler');
+const { findOrCreateUser,findUserById,findUserBingoBoards,findRecentBingoBoards,saveBingoBoard,editBingoBoard,deleteCard,findCardById,findUserByTwitterId} = require('./databaseHandler');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const passport = require('passport');
+const { Strategy: TwitterStrategy } = require('@superfaceai/passport-twitter-oauth2');
+
 app.use(cors({
   origin: "http://localhost:3000",
   credentials: true,
@@ -20,7 +24,94 @@ app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
   next();
 });
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+    cookie: {
+    sameSite: 'lax', // ✅ REQUIRED for OAuth
+    secure: false,   // localhost only (true in prod)
+    httpOnly: true,     // Keep this for security
+    maxAge: 24 * 60 * 60 * 1000 // Optional: 1 day
+  
+  }
+}));
 
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user._id); // or user._id
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await findUserById(id);
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
+passport.use(new TwitterStrategy({
+  
+  clientID: process.env.TWITTER_CLIENTID,
+  clientSecret: process.env.TWITTER_CLIENTSECRET, 
+  callbackURL: 'http://localhost:3001/auth/twitter/callback', // match exactly what you put in X dev portal
+  clientType: 'confidential', 
+  pkce: true,                 // required by X
+  state: true,            
+},async (accessToken, refreshToken, profile, done) => {
+ 
+
+  try {
+    // profile contains: id, username, name, profile_image_url, etc.
+   
+    const user = await findOrCreateUser({
+      twitterId: profile.id,
+      name: profile.username || profile.name || profile.displayName,
+    picture: profile._json?.profile_image_url_https 
+      || profile.photos?.[0]?.value 
+      || null,
+    
+    });
+
+    // You can store access/refresh tokens if you plan to make API calls later
+    // user.twitterAccessToken = accessToken;
+    // user.twitterRefreshToken = refreshToken;
+
+    return done(null, user);
+  } catch (err) {
+    return done(err);
+  }
+}));
+app.get('/auth/twitter',
+  passport.authenticate('twitter', {
+    scope: ['users.read', 'tweet.read', 'offline.access']
+  })
+);
+
+app.get('/auth/twitter/callback',
+  passport.authenticate('twitter', {
+    failureRedirect: 'http://localhost:3000/login?error=twitter_failed',
+    // successRedirect: 'http://localhost:3000/dashboard' // ← you can use this OR...
+  }),
+  (req, res) => {
+
+    const appToken = jwt.sign(
+      { userId: req.user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.cookie('auth_token', appToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.redirect('http://localhost:3000/');
+  });
 app.post("/api/auth/google", async (req, res) => {
   try {
     const { token } = req.body;
@@ -61,6 +152,7 @@ app.post("/api/auth/google", async (req, res) => {
 
   }
 });
+
 app.post("/api/auth/checkLogin", requireAuth, async (req, res) => {
   const user = await findUserById(req.userId);
   if (!user) {

@@ -40,13 +40,12 @@ export default function Menu(){
     return(
        <div id="menuContainer">
   <header className="topNav">
-    {/* LEFT: LOGO */}
+
     <h1 className="logoTitle">
-      <span id="miniTxt">Your</span>
+     
       <Link to="/">Yearly-Bingo</Link>
     </h1>
 
-    {/* CENTER: NAV LINKS */}
     <nav className="menuContent">
       <ul>
         <li>

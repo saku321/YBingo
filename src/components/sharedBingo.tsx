@@ -95,9 +95,20 @@ export default function SharedBingo() {
    
       <div className="comments-section">
         <h2 className="comments-title">Comments:</h2>
+          <div className="comments-list">
+          <div className="comment-item">
+            <div className="comment-header">
+              <img  alt="commentauthorImg" className="comment-author-Img"/>
+              <span className="comment-author">
 
-        
-
+              </span>
+              <span className="comment-date">2 hours ago</span>
+            </div>
+            <div className="comment-content">
+              Apina
+            </div>
+          </div>
+       </div>
         <form className="comment-form">
           <textarea
             className="comment-input"
