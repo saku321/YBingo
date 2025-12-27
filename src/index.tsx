@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import Main from './main';
 import Menu from './components/menu';
-import PopularIdeas from './components/popularIdeas';
 import Login from './components/login';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CreateBingo from './components/createBingo';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './authProvider';
 import YourCards from './components/yourCards';
-import BingoCard from './components/bingoCard';
+import SharedBingo from './components/sharedBingo';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -24,13 +23,13 @@ root.render(
     <AuthProvider>
     <BrowserRouter>
     <Menu/>
-    <PopularIdeas/>
+    
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/bingoCreate" element={<CreateBingo />} />
         <Route path="/login" element={<Login />} />
          <Route path="/yourCards" element={<YourCards />} />
-         <Route path="/card/:cardId" element={<BingoCard />} />
+         <Route path="/card/:cardId" element={<SharedBingo />} />
       </Routes>
     </BrowserRouter>
     </AuthProvider>

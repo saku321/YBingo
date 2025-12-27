@@ -49,21 +49,30 @@ async function saveBingoBoard(boardId,boardData) {
   return res.insertedId;
 }
 
-async function editBingoBoard(boardId,ownerId, newBoardData) {
+async function editBingoBoard(boardId, ownerId, newBoardData) {
   const db = await connect();
   const coll = db.collection('bingoBoards');
+
+  const current = await coll.findOne({ boardId, 'boardData.owner': ownerId });
+  if (!current) return null;
 
   const updatedBoardData = {
     ...newBoardData,
     owner: ownerId,
+    createdAt: current.boardData.createdAt || new Date(), // preserve or set if missing
   };
 
   const res = await coll.updateOne(
     { 
-      boardId,                  // match by board ID
-      'boardData.owner': ownerId // match by owner
+      boardId,
+      'boardData.owner': ownerId
     },
-    { $set: { boardData: updatedBoardData, updatedAt: new Date() } }
+    { 
+      $set: { 
+        boardData: updatedBoardData,
+        updatedAt: new Date()
+      } 
+    }
   );
 
   return res.modifiedCount > 0 ? boardId : null;

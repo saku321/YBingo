@@ -1,7 +1,7 @@
 import {useState,useEffect} from 'react';
 import '../styles/yourCards.css';
 import { Link } from 'react-router';
-
+import '../styles/bingoCard.css';
 type CellData = { value: string; marked: boolean };
 type BingoCell = CellData;
 type BingoRow = BingoCell[];
@@ -213,9 +213,9 @@ const getMarkedSet = (boardId: string): Set<string> => {
 
               return (
                 <div key={board.boardId} className="bingoCard">
-                <Link to={`/card/${board.boardId}`} key={board.boardId} style={{ textDecoration: 'none' }}>
+                <Link onClick={isActive ? (e) => e.preventDefault() : undefined} to={`/card/${board.boardId}`} key={board.boardId} style={{ textDecoration: 'none' }}>
 
-                  <div className={`yourBingoGrid ${isActive ? 'editing' : ''}`}>
+                  <div className={`bingoGrid bingoGrid--medium ${isActive ? 'editing' : ''}`}>
                     {board.boardData.card.map((row, r) =>
                       row.map((cell, c) => {
                         const isFree = r === 2 && c === 2;
@@ -224,13 +224,13 @@ const getMarkedSet = (boardId: string): Set<string> => {
 
                         return (
                           <div
-                            className="div-wrapper"
+                            className="cell-wrapper"
                             key={`${board.boardId}-${r}-${c}`}
                             aria-disabled={isFree ? 'true' : 'false'}
                           >
                             <div
                               className={`
-                                disCell 
+                                cell
                                 ${isFree ? 'free' : ''} 
                                 ${isMarked ? 'marked' : ''} 
                                 ${isActive && !isFree ? 'clickable' : ''}

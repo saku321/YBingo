@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import '../styles/bingoCard.css';
+import '../styles/sharedBingo.css';
 
 type CellData = { value: string; marked: boolean };
 type BingoCard = CellData[][];
@@ -21,7 +21,7 @@ interface BingoBoard {
   boardData: BoardData;
 }
 
-export default function BingoCard() {
+export default function SharedBingo() {
   const { cardId } = useParams<{ cardId: string }>();
   const [board, setBoard] = useState<BingoBoard | null>(null);
   const [loading, setLoading] = useState(true);
@@ -61,11 +61,11 @@ export default function BingoCard() {
 
   return (
     <div className="bingo-detail-page">
-      {/* 1. Big bingo grid */}
+     
       <div className="bingo-main">
         <h1 className="page-title">Bingo Card</h1>
 
-        <div className="bingoGrid">
+        <div className="bingoGrid bingoGrid--medium">
           {boardData.card.map((row, r) =>
             row.map((cell, c) => {
               const isCenter = r === 2 && c === 2;
@@ -74,7 +74,7 @@ export default function BingoCard() {
               return (
                 <div key={`${r}-${c}`} className="cell-wrapper">
                   <div
-                    className={`disCell ${isCenter ? 'free' : ''} ${isMarked ? 'marked' : ''}`}
+                    className={`cell ${isCenter ? 'free' : ''} ${isMarked ? 'marked' : ''}`}
                   >
                     {isCenter ? '2026' : cell.value}
                     {isMarked && <span className="cross">✕</span>}
@@ -84,21 +84,19 @@ export default function BingoCard() {
             })
           )}
         </div>
+        <div className="meta-info">
+          <div className="creatorImg"><img src={boardData.owner?.profilePic} alt="creatorImg"/></div>
+          <div className="creatorData">
+            <div className="creator">@{boardData.owner?.name || 'Anonymous'}</div>
+            <div className="date">{createdDate}</div>
+          </div>
       </div>
 
-      {/* 2. Small creator + date – left aligned */}
-      <div className="meta-info">
-        <div className="creator">@ {boardData.owner?.name || 'Anonymous'}</div>
-        <div className="date">{createdDate}</div>
-      </div>
-
-      {/* 3. Comments section with small form */}
+   
       <div className="comments-section">
-        <h2 className="comments-title">comments:</h2>
+        <h2 className="comments-title">Comments:</h2>
 
-        <div className="comments-placeholder">
-          (comments will appear here)
-        </div>
+        
 
         <form className="comment-form">
           <textarea
@@ -111,6 +109,10 @@ export default function BingoCard() {
           </button>
         </form>
       </div>
+      </div>
+
+     
+
     </div>
   );
 }

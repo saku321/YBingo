@@ -1,6 +1,7 @@
-import {useState,useEffect} from 'react';
+import {useState,useEffect,useRef} from 'react';
 import '../styles/bingoCreate.css';
 import Button from '@mui/material/Button'
+import PopularIdeas from './popularIdeas';
 
 type CellData = { value: string; marked: boolean };
 type BingoCard = CellData[][];
@@ -23,8 +24,29 @@ export default function CreateBingo(){
         )
     );
   }
-    
+    const textareaRefs = useRef<(HTMLTextAreaElement | null)[][]>(
+    Array.from({ length: SIZE }, () => Array(SIZE).fill(null))
+  );
+const adjustFontSize = (textarea: HTMLTextAreaElement | null, value: string) => {
+  if (!textarea) return;
 
+  const length = value.trim().length;  // we care about actual content
+  const lines = value.split('\n').length;
+
+  let fontSize = 18; // starting size (big & bold when short)
+
+  // Aggressive shrinking since max is only 30 chars
+  if (length > 8 || lines > 1)  fontSize = 15;
+  if (length > 14 || lines > 2) fontSize = 13;
+  if (length >= 20 || lines > 3) fontSize = 11.5;
+  if (length >= 25)              fontSize = 10;
+  if (length > 28)              fontSize = 9;
+
+  // Very small but still readable as last resort
+  if (length > 28)            fontSize = 8.5;
+
+  textarea.style.fontSize = `${fontSize}px`;
+};
   async function submitCard(){
     try{
       let emptyCells=0;
@@ -67,6 +89,16 @@ export default function CreateBingo(){
     }
   }
   useEffect(() => {
+    card.forEach((row, r) => {
+      row.forEach((cell, c) => {
+        const textarea = textareaRefs.current[r][c];
+        if (textarea) {
+          adjustFontSize(textarea, cell.value);
+        }
+      });
+    });
+  }, [card]);
+  useEffect(() => {
     setCard(prev =>
       prev.map((row, r) =>
         row.map((cell, c) =>
@@ -78,23 +110,35 @@ export default function CreateBingo(){
     
     return(
        <div id="bingoCreatingContainer">
+          <PopularIdeas/>
       <h1 id="siteTitle">Create Bingo Card for 2026</h1>
 
       <div id="creatorContent">
-        <div className="bingoGrid">
+        <div className="bingoGrid bingoGrid--medium">
           {card.map((row, r) =>
             row.map((cell, c) => (
-              <div className="textarea-wrapper" key={`${r}-${c}`}>
-
+    
+              <div className="cell-wrapper" key={`${r}-${c}`}>
+               {r===2&&c===2?(
+                  <div className="cell free">2026</div>
+               ):(
                 <textarea
+                 ref={(el) => {
+                  textareaRefs.current[r][c] = el;
+                }}
                   className={`cell ${r === 2 && c === 2 ? 'free' : ''}`}
                   value={cell.value}
+                  rows={4}
                   disabled={r === 2 && c === 2} 
                   minLength={3}
-                  maxLength={20}
+                  maxLength={30}
                   placeholder={r === 2 && c === 2 ? '' : ''}
                   onChange={(e) => updateCell(r, c, e.target.value)}
+                  
                 />
+              )}
+              
+                
               </div>
             ))
           )}

@@ -7,20 +7,22 @@ import Button from '@mui/material/Button';
 import { red } from '@mui/material/colors';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import './styles/bingoCard.css';
+import PopularIdeas from './components/popularIdeas';
 
 export default function Main() {
   const apiUrl = process.env.REACT_APP_API_DOMAIN || '';
 
   const [boards, setBoards] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+console.log(boards);
   function BingoGrid({
     card,
   }: {
     card: { value: string; marked: boolean }[][];
   }) {
     return (
-      <div className="yourBingoGrid">
+      <div className="bingoGrid bingoGrid--medium" style={{borderRadius:"18px"}}>
         {card.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             const isFree =
@@ -28,12 +30,13 @@ export default function Main() {
               (rowIndex === 2 && colIndex === 2);
 
             return (
-              <div key={`${rowIndex}-${colIndex}`} className="div-wrapper">
+              <div key={`${rowIndex}-${colIndex}`} className="cell-wrapper">
                 <div
-                  className={`disCell ${isFree ? 'free' : ''} ${
+                  className={`cell ${isFree ? 'free' : ''} ${
                     cell.marked ? 'marked' : ''
                   }`}
                 >
+                 
                   {rowIndex === 2 && colIndex === 2 ? '2026' : cell.value}
                   {cell.marked && <span className="cross">✕</span>}
                 </div>
@@ -68,6 +71,7 @@ export default function Main() {
 
   return (
     <div>
+      <PopularIdeas/>
         <div className="mainContainer">
     <section className="hero">
     <div className="hero-bingo-preview">
@@ -111,19 +115,19 @@ export default function Main() {
                     <CardHeader
                     avatar={
                         <Avatar
-                        src={!loading ? board?.boardData?.ownerPicture : undefined}
-                        sx={{ bgcolor: red[500] }}
+                          src={!loading ? board?.boardData?.ownerPicture : undefined}
+                          sx={{ bgcolor: red[500] }}
                         >
-                        {!loading && board?.boardData?.owner?.[0]}
+                          {!loading && board?.boardData?.owner?.[0]}
                         </Avatar>
-                    }
-                    title={!loading ? board?.boardData?.owner || 'Anonymous' : 'Loading...'}
-                    subheader={
-                    !loading
-                        ? board.boardData.createdAt
-                        : 'Loading...'
-                    }
-                    />
+                        }
+                        title={!loading ? board?.boardData?.owner || 'Anonymous' : 'Loading...'}
+                        subheader={
+                          !loading
+                            ? board.boardData.createdAt || board.boardData.updatedAt
+                            : 'Loading...'
+                        }
+                        />
 
                     <div className="bingoCardBody">
                     

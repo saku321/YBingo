@@ -10,80 +10,51 @@
   margin: 0 auto;
 }
 
-/* Grid of cards - responsive columns */
+/* Container for all bingo cards */
 .cardsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.5rem 1.25rem;
-  width: 60%;
-  padding: 1rem 0;
+  width:100%;
+  margin: 0 auto;              /* centers the grid */
+  padding: 1.5rem 1rem;
 }
 
 /* Individual bingo card */
 .bingoCard {
   background-color: white;
-  border: 2px solid #484a4e;
+  border: 1px solid #484a4e;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  max-width: 100%;
+  
+  /* Let the grid column control the width */
+  width: 350px;                 /* ← important! */
+  aspect-ratio: 3.1 / 4;         /* optional: nicer proportions for bingo cards */
 }
 
+/* Optional: Hover effect */
+.bingoCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .cardsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem 1rem;
+    padding: 1rem 0.75rem;
+  }
+}
 .bingoCard:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
-/* Bingo grid itself */
-.yourBingoGrid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
-  background: white;
-  padding: 8px;
-}
 
-/* Each cell wrapper - now using % + min/max for better scaling */
-.div-wrapper {
-  position: relative;
-  aspect-ratio: 1 / 1;           /* perfect square */
-  min-width: 48px;               /* minimum readable size */
-  max-width: 100%;
-}
-
-/* The actual cell content */
-.disCell {
-  position: absolute;
-  inset: 0;
-  border: 1px solid #484a4e;
-  font-size: clamp(0.68rem, 2.5vw, 0.95rem);
-  font-weight: 400;
-  text-align: center;
-  color: #1e293b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  overflow: hidden;
-  word-break: break-word;
-  hyphens: auto;
-  transition: all 0.15s ease;
-}
-
-.disCell.free {
-  background: linear-gradient(135deg, #3a82f7, #f73340);
-  color: white;
-  font-weight: 700;
-  font-size: clamp(0.75rem, 3vw, 1.1rem);
-  border: none;
- 
-}
-
-/* Marked cell (from previous play/mark mode) */
-.disCell.marked {
-  background-color: #d4d9ed !important;
-}
 
 .cross {
   position: absolute;
@@ -104,6 +75,7 @@
   align-items: center;
   padding: 10px 12px;
   flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
   background: #f8f9fa;
   border-top: 1px solid #e9ecef;
