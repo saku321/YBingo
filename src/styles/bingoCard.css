@@ -53,7 +53,9 @@
   border: 1px solid #484a4e;
   transition: all 0.15s ease;
 }
-
+.cell:focus{
+  border:none;
+}
 .cell.free {
   background: linear-gradient(135deg, #3a82f7, #F73340);
   color: white;

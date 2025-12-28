@@ -2,6 +2,7 @@
 import '../styles/menu.css';
 import { useEffect, useState,useRef  } from 'react';
 import {Link} from 'react-router-dom';
+import Button from '@mui/material/Button';
 import { useAuth } from '../authProvider';
 export default function Menu(){
     const [login,setLogin] = useState(false);
@@ -56,7 +57,7 @@ export default function Menu(){
         <li>
           <Link to="/">Learn More</Link>
         </li>
-
+ 
         {isLoggedIn && (
           <li>
             <Link to="/yourCards">Your Cards</Link>
@@ -75,15 +76,21 @@ export default function Menu(){
               alt="profilePic"
               id="profilePic"
             />
+            {user?.isPremium?(
+            <p>{user?.name} 👑</p>
+
+            ):(
             <p>{user?.name}</p>
+              
+            )}
           </div>
 
           {dropDown && (
             <div id="profileDropDown">
-              <button className="dropdownBtn">Profile</button>
-              <button className="dropdownBtn" onClick={logOutUser}>
+              <Button component={Link} to="/premium" className="dropdownBtn">Premium</Button>
+              <Button className="dropdownBtn" onClick={logOutUser}>
                 LogOut
-              </button>
+              </Button>
             </div>
           )}
         </div>

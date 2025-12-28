@@ -89,6 +89,16 @@ text-decoration: none;
   text-decoration: none;
   color: #555;
   font-weight: 600;
+  background-color: #1976d2;
+  border-radius: 6px;
+  color:#fff;
+  text-align: center;
+  width:100px;
+  padding: 10px;
+  height: 40px;
+}
+.loginLink:hover{
+  background-color: #1565c0;
 }
 
 /* ===== PROFILE ===== */
@@ -124,10 +134,11 @@ text-decoration: none;
   box-shadow: 0 8px 16px rgba(0,0,0,0.15);
   z-index: 10;
 }
-
-.dropdownBtn {
-  background: none;
+.dropdownBtn{
+  text-decoration: none;
+    background: none;
   border: 1px solid #ccc;
+  color: #484a4e;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;

@@ -169,32 +169,48 @@ async function findUserByTwitterId(twitterId) {
   return db.collection('users').findOne({twitterId });
 }
 
-
 async function createUser(userData) {
   const db = await connect();
 
+  // Required: at least one auth provider
   if (!userData.googleId && !userData.twitterId) {
     throw new Error("User data must contain at least one provider ID (googleId or twitterId)");
   }
 
+  // Normalize / clean input (optional but recommended)
+  const normalizedData = {
+    ...userData,
+    name: userData.name?.trim() || 'Anonymous',
+    picture: userData.picture || null,
+  
+    
+    isPremium: false,
+    updatedAt: new Date(),
+  };
+
   let existingUser = null;
 
-  if (userData.googleId) {
-    existingUser = await findUserByGoogleId(userData.googleId);
-  }
-  
-  if (!existingUser && userData.twitterId) {
-    existingUser = await findUserByTwitterId(userData.twitterId);
+  if (normalizedData.googleId) {
+    existingUser = await findUserByGoogleId(normalizedData.googleId);
   }
 
+  if (!existingUser && normalizedData.twitterId) {
+    existingUser = await findUserByTwitterId(normalizedData.twitterId);
+  }
+
+ 
   if (existingUser) {
+    
     return existingUser._id;
   }
-  const res = await db.collection('users').insertOne(userData);
-  return res.insertedId;
+
+  // Create new user with defaults
+  const result = await db.collection('users').insertOne(normalizedData);
+
+  return result.insertedId;
 }
 async function findOrCreateUser(providerData) {
-  // IMPORTANT: We no longer use userData.userId — it's not reliable here
+  const db = await connect();
   let user = null;
 
   // Try to find existing user by any provided provider ID
@@ -233,6 +249,39 @@ async function findOrCreateUser(providerData) {
   const newUserId = await createUser(providerData);
   return await findUserById(newUserId);
 }
+async function upgradeUser(userId, txId) {
+  const db = await connect();
+
+  // Input validation
+  if (!userId || !txId) {
+    throw new Error("Missing userId or transaction ID (txId)");
+  }
+
+  try {
+    const result = await db.collection("users").updateOne(
+      { _id: new ObjectId(userId) },
+      {
+        $set: {
+          isPremium: true,
+          updatedAt: new Date(),
+          lastPremiumTx: txId          
+        }
+      }
+    );
+
+    // Return success/failure info
+    console.log(result.modifiedCount);
+    return {
+      success: result.matchedCount === 1,       // at least the user exists
+      updated: result.modifiedCount === 1,
+   
+    };
+  } catch (error) {
+    console.error("Error upgrading user:", error);
+    throw error; 
+  }
+}
+
 async function close() {
   if (_client) {
     await _client.close();
@@ -246,6 +295,7 @@ module.exports = {
   saveBingoBoard,
   findUserBingoBoards,
   findRecentBingoBoards,
+  upgradeUser,
   findUserById,
   editBingoBoard,
   deleteCard,

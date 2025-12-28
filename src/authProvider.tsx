@@ -7,11 +7,13 @@ type AuthContextType = {
      setUser: (user: User | null) => void;
   fetchUser: () => Promise<void>;
   clearUser: () => void;
+  refetchAuth:()=>void;
 };
 type User = {
   email: string;
   name?: string;
   picture?: string;
+  isPremium:boolean;
   // add other fields you need
 };
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -53,10 +55,12 @@ const fetchUser = async () => {
     setUser(null);
     setIsLoggedIn(false);
   }
-};
+};const refetchAuth = async () => {
+    await fetchUser();
+  };
 
   return (
-   <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, fetchUser,clearUser,setUser }}>
+   <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, fetchUser,clearUser,setUser,refetchAuth }}>
       {children}
     </AuthContext.Provider>
   );

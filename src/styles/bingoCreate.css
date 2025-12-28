@@ -18,9 +18,9 @@
   font-family: 'Montserrat', sans-serif;
 
   margin: auto;
-  width:70%; 
+  width:55rem; 
    display:grid;
-  grid-template-columns: 20px 1fr;
+  grid-template-columns: 0vw 1fr;
   justify-content: center;
   align-items: center;
 }
@@ -28,6 +28,7 @@
 #creatorContent {
    display: flex;
    justify-self: center;
+   flex-wrap: nowrap;
   width:40%;
 
 }
@@ -85,17 +86,37 @@ textarea{
   border: 1px solid rgba(255,255,255,0.08);
   position:sticky;
   top:20px;
+  
   align-self: self-end;
 }
-
+#blurrer{
+  filter:blur(2px);
+  
+}
 #colorPickerContainer {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+}
+#pickerColumn {
+  display: flex;
+  flex-direction: column;     /* stack them vertically */
+  width: 100%;
 }
 
+/* Each pair (label + color input) */
+.gradient-input-pair {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
 
-
+.colorPicker:disabled{
+  cursor: default;
+}
+#center{
+  margin-top:50px;
+}
 .color-control {
   display: flex;
   align-items: center;
@@ -112,21 +133,51 @@ textarea{
 }
 
 .colorPicker {
-  flex: 1;
   max-width: 60px;
   height: 30px;
   border-radius: 8px;
   cursor: pointer;
   border: 2px solid #444;
-}/* ────────────────────────────────────────
+  margin-top: 1rem;
+}
+
+/*promo*/
+
+
+
+
+.promo-glow-btn {
+  padding: 10px 15px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  background: #1976d2 !important;
+  white-space: nowrap;
+  color: white !important;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.4);
+  transition: all 0.4s ease;
+  position:absolute;
+  z-index: 22;
+  left:5rem;
+  font-family: 'Montserrat', sans-serif !important;
+    font-weight: 600 !important;
+  font-size: 1rem;
+  top:5rem;
+  
+}
+
+.promo-glow-btn:hover {
+  transform: scale(1.08);
+   box-shadow: 0 0px 15px rgba(0, 0, 0, 0.4);
+}
+/* ────────────────────────────────────────
    RESPONSIVE BREAKPOINTS
 ───────────────────────────────────────── */
 
-@media (max-width: 950px) {
-  #bingoCreatingContainer {
-    grid-template-columns: minmax(260px, 320px) 1fr;
-    gap: 2rem;
-  }
+@media (max-width: 1050px) {
+  
 
   .bingoGrid.bingoGrid--medium {
     max-width: 580px;
