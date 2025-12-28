@@ -106,15 +106,15 @@ const adjustFontSize = (textarea: HTMLTextAreaElement | null) => {
       setStatus(`Fill all cells with at least 3 characters`);
       return;
     }
+    
       const res = await fetch(`${apiUrl}/api/createCard`,{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ card }),
+        body: JSON.stringify({ card,colors }),
         credentials:"include",
         
       });
       const result = await res.json().catch(() => null);
-      console.log('createCard response', res.status, result);
       if(result.ok){
         setStatus("You Bingo Card is Saved!");
         setCard(Array.from({ length: SIZE }, () =>
@@ -127,6 +127,13 @@ const adjustFontSize = (textarea: HTMLTextAreaElement | null) => {
         )
       )
     );
+
+     setColors({
+    text:'#1e293b',
+    background: '#ffffff',
+    lines: '#000000',
+    center:[ '#3a82f7', '#F73340'],
+  });
       }
     }catch(err){
       console.error('submitCard error', err);
@@ -158,7 +165,6 @@ const handleColorPicker = (e: React.ChangeEvent<HTMLInputElement>) => {
     };
   });
 };
- console.log(colors.center);
   
     return(
        <div id="bingoCreateMain">

@@ -20,21 +20,73 @@ body{
 }
 /* Meta info – left aligned, small */
 .meta-info {
-  text-align: left;
-  margin:20px;
-  margin-left:0;
+  display: flex;
+  justify-content: space-between;      /* pushes creator left, stats right */
+  align-items: center;                 /* vertical center alignment */
+  margin: 20px 0;                      /* top/bottom margin, no left */
+  padding: 0 10px;                     /* optional breathing room */
   font-size: 0.95rem;
-  display:flex;
-  flex-direction: row;
   color: #555;
+  flex-wrap: wrap;                     /* safe for very small screens */
+  gap: 16px;                           /* space if it wraps */
+}
+
+/* Group creator pic + text together */
+.creator-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;                           /* space between pic and text */
+}
+
+/* Creator text block */
+.creatorData {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
 }
 
 .creator {
   font-weight: 600;
   color: #000;
+  margin-bottom: 2px;                  /* small space between name and date */
 }
-.creatorData{
+
+.date {
+  font-size: 0.85rem;
+  color: #777;
 }
+
+/* Stats on the right */
+.cardStats {
+  display: flex;
+  align-items: start;
+  justify-items: start;
+  gap: 8px;                            /* space between heart and number */
+  font-weight: 600;
+  color: #e11d48;                      /* red for likes */
+}
+
+.statImg {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+.statImg:hover{
+  transform: scale(1.05);
+}
+/* Optional: make it responsive */
+@media (max-width: 480px) {
+  .meta-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .cardStats {
+    align-self: flex-start;
+  }
+}
+
 .creatorImg img{
   border-radius: 360px;
   width:2.5vw;

@@ -235,9 +235,10 @@ async function getPayPalAccessToken() {
     
       const { card } = req.body;
       const owner= req.userId;
+      const cardColors = req.body.colors;
       if (!card) return res.status(400).json({ error: 'Missing card in request body' });
       const cardID=nanoid(7);
-      const insertedId = await saveBingoBoard(cardID, {owner,card, createdAt: new Date() });
+      const insertedId = await saveBingoBoard(cardID, {owner,card,cardColors, createdAt: new Date() });
       return res.status(201).json({ ok: true, id: insertedId });
     } catch (err) {
       console.error('createCard error', err);
@@ -267,27 +268,35 @@ async function getPayPalAccessToken() {
     }
   });
 
-  app.post('/api/editCard', requireAuth, async (req, res) => { 
-    try {
-      const { boardId, newData } = req.body;
-      const owner = req.userId;
-      if (!boardId || !newData) {
-        return res.status(400).json({ error: 'Missing cardId or newCard in request body' });
-      }
+app.post('/api/editCard', requireAuth, async (req, res) => {
+  try {
+    const { boardId, newData, cardColors } = req.body;
+    const owner = req.userId;
 
-      const updatedId = await editBingoBoard(boardId, owner, { card: newData });
-
-      if (!updatedId) {
-        return res.status(404).json({ error: "Card not found or you're not the owner" });
-      }
-
-      return res.status(200).json({ ok: true, id: updatedId });
+    if (!boardId || !newData) {
+      return res.status(400).json({ error: 'Missing boardId or newData' });
     }
-    catch (err) {
-      console.error('editCard error', err);
-      return res.status(500).json({ error: 'Internal server error' });
+
+    // Build update object
+    const updateFields = { card: newData };
+
+    // Only update cardColors if it was explicitly sent
+    if (cardColors) {
+      updateFields.cardColors = cardColors;
     }
-  });
+
+    const updatedId = await editBingoBoard(boardId, owner, updateFields);
+
+    if (!updatedId) {
+      return res.status(404).json({ error: "Card not found or you're not the owner" });
+    }
+
+    return res.status(200).json({ ok: true, id: updatedId });
+  } catch (err) {
+    console.error('editCard error', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
   app.post('/api/deleteCards', requireAuth, async (req, res) => {
     try {
       const { boardIds } = req.body;  

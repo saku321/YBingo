@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 export default function Login() {
- const { setIsLoggedIn, setUser } = useAuth();
+ const { setIsLoggedIn, setUser,refetchAuth } = useAuth();
  const navigate = useNavigate();
  const [error, setError] = useState<string | null>(null);
  const [loading, setLoading] = useState(false);
@@ -41,6 +41,7 @@ export default function Login() {
     console.log("Login successful", data);
     setIsLoggedIn(true);
      setUser(data.user);
+     await refetchAuth();
    navigate("/");
   }catch(err:any){
     console.log("google error: ",err);

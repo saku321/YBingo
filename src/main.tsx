@@ -10,6 +10,15 @@ import { Link } from 'react-router-dom';
 import './styles/bingoCard.css';
 import PopularIdeas from './components/popularIdeas';
 import { useAuth } from './authProvider';
+interface colorData{
+  text:string,
+  lines:string,
+  background:string,
+  center:[string,string]
+}
+
+
+
 
 export default function Main() {
   const apiUrl = process.env.REACT_APP_API_DOMAIN || '';
@@ -20,8 +29,10 @@ export default function Main() {
 
   function BingoGrid({
     card,
+    cardColors
   }: {
     card: { value: string; marked: boolean }[][];
+    cardColors?:colorData;
   }) {
     return (
       <div className="bingoGrid bingoGrid--medium" style={{borderRadius:"18px"}}>
@@ -32,16 +43,27 @@ export default function Main() {
               (rowIndex === 2 && colIndex === 2);
 
             return (
-              <div key={`${rowIndex}-${colIndex}`} className="cell-wrapper">
+              
+              <div key={`${rowIndex}-${colIndex}`} className="cell-wrapper" style={{backgroundColor:`${cardColors?.background}`}}>
+                {rowIndex===2&&colIndex===2?(
+                  <div className="cell free" style={{background:`linear-gradient(135deg, ${cardColors?.center[0] || '#3a82f7'}, ${cardColors?.center[1] || '#f73340'})`}}>2026</div>
+                ):(
+
+               
                 <div
-                  className={`cell ${isFree ? 'free' : ''} ${
+                  className={`cell ${
                     cell.marked ? 'marked' : ''
                   }`}
+                  style={{
+                    color:`${cardColors?.text}`,
+                    border:`1px solid ${cardColors?.lines}`
+                  }}
                 >
                  
                   {rowIndex === 2 && colIndex === 2 ? '2026' : cell.value}
                   {cell.marked && <span className="cross">✕</span>}
                 </div>
+                 )}
               </div>
             );
           })
@@ -156,7 +178,7 @@ export default function Main() {
                                     cursor: 'pointer',
                                 }}
                                 >
-                            <BingoGrid card={board.boardData.card} />
+                            <BingoGrid card={board.boardData.card} cardColors={board.boardData.cardColors} />
                             </a>
                         </div>
                         )}

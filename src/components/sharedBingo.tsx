@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../styles/sharedBingo.css';
-
+import heartPng from '../assets/heart.png';
+import commentPng from '../assets/chat.png';
 type CellData = { value: string; marked: boolean };
 type BingoCard = CellData[][];
 
@@ -9,11 +10,17 @@ interface OwnerInfo {
   name: string;
   profilePic?: string;
 }
-
+interface ColorData {
+  text?: string;
+  lines?: string;
+  background?: string | [string, string];
+  center?: [string, string];
+}
 interface BoardData {
   owner: OwnerInfo;
   card: BingoCard;
   createdAt: string;
+   cardColors?: ColorData; 
 }
 
 interface BingoBoard {
@@ -68,27 +75,51 @@ export default function SharedBingo() {
         <div className="bingoGrid bingoGrid--medium">
           {boardData.card.map((row, r) =>
             row.map((cell, c) => {
-              const isCenter = r === 2 && c === 2;
+              const isFree = r === 2 && c === 2;
               const isMarked = cell.marked;
-
-              return (
-                <div key={`${r}-${c}`} className="cell-wrapper">
+               const cardColors = board.boardData.cardColors || {}; 
+             return (
+              <div className="cell-wrapper" key={`${r}-${c}`} style={{backgroundColor:`${cardColors.background}`}}>
+                {isFree ? (
                   <div
-                    className={`cell ${isCenter ? 'free' : ''} ${isMarked ? 'marked' : ''}`}
+                    className="cell free"
+                    style={{
+                      background: `linear-gradient(135deg, ${
+                        cardColors.center?.[0] || '#3a82f7'
+                      }, ${cardColors.center?.[1] || '#f73340'})`,
+                    }}
                   >
-                    {isCenter ? '2026' : cell.value}
-                    {isMarked && <span className="cross">✕</span>}
+                    2026
                   </div>
-                </div>
-              );
+                ) : (
+                  <div
+                    className={`cell ${isMarked ? 'marked' : ''}`}
+                    style={{
+                      border: `1px solid ${cardColors.lines || '#cccccc'}`,
+                      color: cardColors.text || '#000000',
+                    }}
+                  >
+                    {cell.value}
+                    {isMarked && <span className="cross">✗</span>}
+                  </div>
+                )}
+              </div>
+            );
             })
           )}
         </div>
         <div className="meta-info">
-          <div className="creatorImg"><img src={boardData.owner?.profilePic} alt="creatorImg"/></div>
           <div className="creatorData">
+            <div className="creatorImg"><img src={boardData.owner?.profilePic} alt="creatorImg"/></div>
+
             <div className="creator">@{boardData.owner?.name || 'Anonymous'}</div>
             <div className="date">{createdDate}</div>
+          </div>
+          <div className="cardStats">
+            <img src={heartPng} alt="likePng" className="statImg"/>
+            <span>20k</span>
+            <img src={commentPng} alt="commentPng" className="statImg"/>
+            <span>1</span>
           </div>
       </div>
 

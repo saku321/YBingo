@@ -27,7 +27,7 @@ async function connect() {
 async function saveBingoBoard(boardId,boardData) {
   const db = await connect();
 
-
+  
   const coll = db.collection('bingoBoards');
   const existing = await coll.findOne({ boardId });
   if (existing) {
@@ -42,6 +42,8 @@ async function saveBingoBoard(boardId,boardData) {
   const doc = {
     boardId,
     boardData,
+
+    
   
   };
 
@@ -57,6 +59,7 @@ async function editBingoBoard(boardId, ownerId, newBoardData) {
   if (!current) return null;
 
   const updatedBoardData = {
+    ...current,
     ...newBoardData,
     owner: ownerId,
     createdAt: current.boardData.createdAt || new Date(), // preserve or set if missing
@@ -68,10 +71,10 @@ async function editBingoBoard(boardId, ownerId, newBoardData) {
       'boardData.owner': ownerId
     },
     { 
-      $set: { 
-        boardData: updatedBoardData,
-        updatedAt: new Date()
-      } 
+   $set: {
+        'boardData.card': newBoardData.card,
+        'boardData.updatedAt': new Date(),
+      },
     }
   );
 
