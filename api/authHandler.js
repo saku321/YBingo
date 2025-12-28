@@ -23,15 +23,15 @@ async function verifyGoogleToken(idToken) {
 function requireAuth(req, res, next) {
   const token = req.cookies.auth_token;
   if (!token) {
-    return res.status(401).json({ error: "Not authenticated" });
+    return res.json({ authenticated: false });
   }
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = decoded.userId;
-    
+    req.authenticated=true;
     next();
   } catch {
+     req.authenticated=false;
     return res.status(401).json({ error: "Invalid token" });
   }
 }

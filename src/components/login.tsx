@@ -57,7 +57,7 @@ export default function Login() {
 return (
       <div className="loginContainer">
         <div>
-          <h1>Login to save your Cards</h1>
+          <h1 className="siteTitle">Login to save your Cards</h1>
 
           {error && <p style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>}
 

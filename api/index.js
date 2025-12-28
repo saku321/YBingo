@@ -158,10 +158,16 @@ app.post("/api/auth/checkLogin", requireAuth, async (req, res) => {
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
+  
+  if (!req.authenticated) {
+    return res.json({ authenticated: false });
+  }
+
   const filterData={
     
     name:user.name,
-    picture:user.picture
+    picture:user.picture,
+    auth:req.authenticated,
   }
   
   res.json(filterData);

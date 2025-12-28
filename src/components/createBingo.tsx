@@ -27,25 +27,28 @@ export default function CreateBingo(){
     const textareaRefs = useRef<(HTMLTextAreaElement | null)[][]>(
     Array.from({ length: SIZE }, () => Array(SIZE).fill(null))
   );
-const adjustFontSize = (textarea: HTMLTextAreaElement | null, value: string) => {
+const adjustFontSize = (textarea: HTMLTextAreaElement | null) => {
   if (!textarea) return;
 
-  const length = value.trim().length;  // we care about actual content
-  const lines = value.split('\n').length;
+  // Reset first
+  textarea.style.fontSize = '';
+  textarea.style.lineHeight = '';
 
-  let fontSize = 18; // starting size (big & bold when short)
+  // Let CSS handle most of the scaling
+  // The class .cell already has clamp() — we just help with very long content
+  const length = textarea.value.trim().length;
+  const lines = textarea.value.split('\n').length;
 
-  // Aggressive shrinking since max is only 30 chars
-  if (length > 8 || lines > 1)  fontSize = 15;
-  if (length > 14 || lines > 2) fontSize = 13;
-  if (length >= 20 || lines > 3) fontSize = 11.5;
-  if (length >= 25)              fontSize = 10;
-  if (length > 28)              fontSize = 9;
+  // Only aggressive shrink when text is really long
+  let scale = 1;
 
-  // Very small but still readable as last resort
-  if (length > 28)            fontSize = 8.5;
+  if (length > 22 || lines > 4)      scale = 0.82;
+  else if (length > 16 || lines > 3) scale = 0.90;
+  else if (length > 10 || lines > 1) scale = 0.96;
 
-  textarea.style.fontSize = `${fontSize}px`;
+  // Optional: very slight line-height adjustment
+  textarea.style.fontSize = `calc(var(--cell-font-size) * ${scale})`;
+  textarea.style.lineHeight = lines > 3 ? '1.18' : '1.28';
 };
   async function submitCard(){
     try{
@@ -93,7 +96,7 @@ const adjustFontSize = (textarea: HTMLTextAreaElement | null, value: string) => 
       row.forEach((cell, c) => {
         const textarea = textareaRefs.current[r][c];
         if (textarea) {
-          adjustFontSize(textarea, cell.value);
+          adjustFontSize(textarea);
         }
       });
     });
@@ -109,11 +112,35 @@ const adjustFontSize = (textarea: HTMLTextAreaElement | null, value: string) => 
   }, []);
     
     return(
-       <div id="bingoCreatingContainer">
+       <div id="bingoCreateMain">
           <PopularIdeas/>
       <h1 id="siteTitle">Create Bingo Card for 2026</h1>
+    <div id="bingoCreatingContainer">
+      <div id="customContainer">
+        <div id="colorPickerContainer">
+          <div className="color-control">
+            <span>Text Color</span>
+            <input type="color" className="colorPicker" />
+          </div>
 
+          <div className="color-control">
+            <span>Background Color</span>
+            <input type="color" className="colorPicker" />
+          </div>
+
+          <div className="color-control">
+            <span>Column Lines</span>
+            <input type="color" className="colorPicker" />
+          </div>
+
+          <div className="color-control">
+            <span>Center Column</span>
+            <input type="color" className="colorPicker" />
+          </div>
+        </div>
+      </div>
       <div id="creatorContent">
+     
         <div className="bingoGrid bingoGrid--medium">
           {card.map((row, r) =>
             row.map((cell, c) => (
@@ -143,6 +170,8 @@ const adjustFontSize = (textarea: HTMLTextAreaElement | null, value: string) => 
             ))
           )}
           </div>
+         
+  </div>
       </div>
        <span id="statusTxt">{status}</span>
 

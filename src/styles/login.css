@@ -3,8 +3,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 50vh;
+    height: 70vh;
+    
 }
+
 #twitterLoginBtn{
     display: flex;
     align-items: center;
@@ -13,20 +15,22 @@
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 600;
-    width:60%;
+    width:100%;
     color: #ffffff;
-    background-color: #000000; /* X's primary black */
+    background-color: #000000;
     border: none;
-    border-radius: 9999px; /* Pill-shaped, common for modern buttons */
+    border-radius: 9999px;
     cursor: pointer;
     transition: background-color 0.2s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    margin-top:30px;
 }
-.login-with-x:hover {
-    background-color: #1a1a1a;
+#twitterLoginBtn:hover {
+    background-color: #242424;
 }
 
-.login-with-x:active {
+#twitterLoginBtn:active {
     background-color: #333333;
 }
 .twitter-Logo{

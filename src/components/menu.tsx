@@ -43,7 +43,7 @@ export default function Menu(){
 
     <h1 className="logoTitle">
      
-      <Link to="/">Yearly-Bingo</Link>
+      <Link to="/">Yearly-Bingos</Link>
     </h1>
 
     <nav className="menuContent">

@@ -6,19 +6,30 @@
   box-sizing: border-box;
 }
 
-#bingoCreatingContainer {
-  width: 60%;
-  max-width: 620px;
+#bingoCreateMain {
+  width: 100%;
   margin: 1.5em auto;
   font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  
+}
+#bingoCreatingContainer{
+  font-family: 'Montserrat', sans-serif;
+
+  margin: auto;
+  width:70%; 
+   display:grid;
+  grid-template-columns: 20px 1fr;
+  justify-content: center;
+  align-items: center;
 }
 
 #creatorContent {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width:65%;
-  margin:auto;
+   display: flex;
+   justify-self: center;
+  width:40%;
+
 }
 
 textarea{
@@ -65,4 +76,105 @@ textarea{
 
 .generateCardBtn:hover {
   background-color: #2563eb;
+}
+
+#customContainer {
+  padding: 1.4rem 1.8rem;
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  position:sticky;
+  top:20px;
+  align-self: self-end;
+}
+
+#colorPickerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+
+
+.color-control {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 250px;
+}
+
+.color-control span {
+  flex: 0 0 140px;         /* or use min-width: 140px; */
+  text-align: right;
+  font-weight: 500;
+    color: #484a4e;
+  font-size: 0.75rem;
+}
+
+.colorPicker {
+  flex: 1;
+  max-width: 60px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid #444;
+}/* ────────────────────────────────────────
+   RESPONSIVE BREAKPOINTS
+───────────────────────────────────────── */
+
+@media (max-width: 950px) {
+  #bingoCreatingContainer {
+    grid-template-columns: minmax(260px, 320px) 1fr;
+    gap: 2rem;
+  }
+
+  .bingoGrid.bingoGrid--medium {
+    max-width: 580px;
+  }
+}
+
+@media (max-width: 820px) {
+  #bingoCreatingContainer {
+    grid-template-columns: 1fr;           /* ← stack vertically */
+    gap: 2.5rem;
+  }
+
+  #customContainer {
+    position: static;                     /* no more sticky on mobile */
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  #creatorContent {
+    margin-top: 1rem;
+  }
+
+  .bingoGrid.bingoGrid--medium {
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 600px) {
+  #bingoCreateMain {
+    padding: 0 0.8rem;
+  }
+
+  #siteTitle {
+    font-size: clamp(1.5rem, 6vw, 2.1rem);
+  }
+
+  .bingoGrid.bingoGrid--medium {
+    max-width: 100%;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  #customContainer {
+    padding: 1.3rem 1.5rem;
+  }
+
+  .color-control span {
+    font-size: 0.9rem;
+  }
 }
