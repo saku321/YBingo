@@ -7,6 +7,7 @@ import { useFeedback } from '../components/Feedback'
 import { Icon, PageLoader } from '../components/ui'
 import { COLOR_PRESETS, DEFAULT_COLORS, PREMIUM_PRICE, defaultYear, winningCells } from '../lib/bingo'
 import { supabase } from '../lib/supabase'
+import { useTheme } from '../lib/theme'
 import type { CardColors, Cell } from '../lib/types'
 
 const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID?.trim()
@@ -20,22 +21,14 @@ const PERKS = [
 
 const preset = (name: string): CardColors => COLOR_PRESETS.find((p) => p.name === name)?.colors ?? DEFAULT_COLORS
 
-/** The demo cards loop through every preset plus a few mixes made with the color pickers. */
-const THEMES: CardColors[] = [
+/**
+ * The demo cards loop through the presets plus a few mixes made with the color pickers,
+ * split by background so they always match the site's light or dark theme.
+ */
+const LIGHT_THEMES: CardColors[] = [
   preset('Classic'),
-  preset('Night'),
   preset('Sunset'),
-  preset('Ocean'),
   preset('Paper'),
-  // Grape
-  {
-    background: '#1c1530',
-    text: '#f1ebff',
-    lines: '#372b57',
-    centerFrom: '#a855f7',
-    centerTo: '#ec4899',
-    marker: '#f472b6',
-  },
   // Mint
   {
     background: '#ecfbf4',
@@ -44,6 +37,20 @@ const THEMES: CardColors[] = [
     centerFrom: '#10b981',
     centerTo: '#0891b2',
     marker: '#059669',
+  },
+]
+
+const DARK_THEMES: CardColors[] = [
+  preset('Night'),
+  preset('Ocean'),
+  // Grape
+  {
+    background: '#1c1530',
+    text: '#f1ebff',
+    lines: '#372b57',
+    centerFrom: '#a855f7',
+    centerTo: '#ec4899',
+    marker: '#f472b6',
   },
   // Neon
   {
@@ -68,6 +75,7 @@ const DEMO_2_WINS = winningCells(DEMO_2)
 function ThemeDemo() {
   const [tick, setTick] = useState(0)
   const [paused, setPaused] = useState(false)
+  const [siteTheme] = useTheme()
   const reduced = useMemo(() => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches, [])
 
   useEffect(() => {
@@ -76,15 +84,21 @@ function ThemeDemo() {
     return () => window.clearInterval(t)
   }, [reduced, paused])
 
-  // The cards take turns changing, half a beat apart, and stay four themes apart so they never match.
-  const back = THEMES[Math.floor(tick / 2) % THEMES.length]
-  const front = THEMES[(Math.floor((tick + 1) / 2) + THEMES.length / 2) % THEMES.length]
+  // The cards take turns changing, half a beat apart, and stay half the list apart so they never match.
+  const themes = siteTheme === 'dark' ? DARK_THEMES : LIGHT_THEMES
+  const back = themes[Math.floor(tick / 2) % themes.length]
+  const front = themes[(Math.floor((tick + 1) / 2) + themes.length / 2) % themes.length]
   const year = defaultYear()
 
   return (
     <div className="premium-demo" aria-hidden onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <BingoTicket cells={DEMO} year={year} colors={back} wins={DEMO_WINS} className="ticket--morph" />
-      <BingoTicket cells={DEMO_2} year={year} colors={front} wins={DEMO_2_WINS} className="ticket--morph" />
+      {/* The wrappers carry the tilt, float and hover; the cards themselves fade between colors. */}
+      <div className="premium-demo-card">
+        <BingoTicket cells={DEMO} year={year} colors={back} wins={DEMO_WINS} className="ticket--morph" />
+      </div>
+      <div className="premium-demo-card">
+        <BingoTicket cells={DEMO_2} year={year} colors={front} wins={DEMO_2_WINS} className="ticket--morph" />
+      </div>
     </div>
   )
 }

@@ -2511,27 +2511,53 @@ a.comment-author:hover {
   text-decoration: underline;
 }
 
-/* two tilted demo cards that keep changing themes */
+/* two tilted demo cards that float and keep changing themes */
 .premium-demo {
   position: relative;
   min-height: 520px;
 }
 
-.premium-demo .ticket {
+.premium-demo-card {
   position: absolute;
   width: 78%;
+  transition:
+    rotate 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    scale 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: demo-float 6s ease-in-out infinite;
 }
 
-.premium-demo .ticket:first-child {
+.premium-demo-card:first-child {
   top: 0;
   left: 0;
-  transform: rotate(-5deg);
+  rotate: -5deg;
 }
 
-.premium-demo .ticket:last-child {
+.premium-demo-card:last-child {
   right: 0;
   bottom: 0;
-  transform: rotate(4deg);
+  rotate: 4deg;
+  animation-delay: -3s;
+}
+
+/* hovering straightens a card, lifts it and brings it to the front */
+.premium-demo-card:hover {
+  z-index: 2;
+  rotate: 0deg;
+  scale: 1.04;
+}
+
+.premium-demo-card .ticket-face {
+  transition: box-shadow 0.4s;
+}
+
+.premium-demo-card:hover .ticket-face {
+  box-shadow: var(--shadow);
+}
+
+@keyframes demo-float {
+  50% {
+    translate: 0 -10px;
+  }
 }
 
 /* ==========================================================================

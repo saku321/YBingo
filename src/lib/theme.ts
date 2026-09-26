@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 
 export type Theme = 'light' | 'dark'
 const KEY = 'yb-theme'
@@ -17,29 +17,26 @@ function apply(theme: Theme) {
   }
 }
 
+/** <html data-theme> is the single source of truth, so every component using the hook stays in step. */
+function subscribe(onChange: () => void) {
+  const observer = new MutationObserver(onChange)
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+  // Keep several tabs in sync.
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === KEY && (e.newValue === 'dark' || e.newValue === 'light')) {
+      document.documentElement.dataset.theme = e.newValue
+    }
+  }
+  window.addEventListener('storage', onStorage)
+  return () => {
+    observer.disconnect()
+    window.removeEventListener('storage', onStorage)
+  }
+}
+
 /** Light is the default; the choice is remembered per browser. */
 export function useTheme(): [Theme, () => void] {
-  const [theme, setTheme] = useState<Theme>(current)
-
-  useEffect(() => {
-    // Keep several tabs in sync.
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === KEY && (e.newValue === 'dark' || e.newValue === 'light')) {
-        document.documentElement.dataset.theme = e.newValue
-        setTheme(e.newValue)
-      }
-    }
-    window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
-  }, [])
-
-  const toggle = useCallback(() => {
-    setTheme((t) => {
-      const next: Theme = t === 'dark' ? 'light' : 'dark'
-      apply(next)
-      return next
-    })
-  }, [])
-
+  const theme = useSyncExternalStore(subscribe, current)
+  const toggle = useCallback(() => apply(current() === 'dark' ? 'light' : 'dark'), [])
   return [theme, toggle]
 }
